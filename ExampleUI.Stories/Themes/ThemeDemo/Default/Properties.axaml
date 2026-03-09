@@ -1,0 +1,16 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:ExampleUI.Stories.Themes.ThemeDemo.Default"
+             x:Class="ExampleUI.Stories.Themes.ThemeDemo.Default.Properties"
+             x:DataType="local:Story">
+    <StackPanel Spacing="12" Margin="8">
+        <StackPanel Spacing="4">
+            <TextBlock Text="Title" FontWeight="SemiBold" />
+            <TextBox Text="{Binding Title}" />
+        </StackPanel>
+        <StackPanel Spacing="4">
+            <TextBlock Text="Message" FontWeight="SemiBold" />
+            <TextBox Text="{Binding Message}" />
+        </StackPanel>
+    </StackPanel>
+</UserControl>

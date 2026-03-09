@@ -1,0 +1,11 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="using:ExampleUI.Controls"
+             xmlns:local="using:ExampleUI.Stories.Themes.ThemeDemo.Default"
+             x:Class="ExampleUI.Stories.Themes.ThemeDemo.Default.Control"
+             x:DataType="local:Story">
+    <controls:ThemeDemo Title="{Binding Title}"
+                        Message="{Binding Message}"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+</UserControl>

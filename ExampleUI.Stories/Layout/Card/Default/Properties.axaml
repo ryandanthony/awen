@@ -1,0 +1,24 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:ExampleUI.Stories.Layout.Card.Default"
+             x:Class="ExampleUI.Stories.Layout.Card.Default.Properties"
+             x:DataType="local:Story">
+    <StackPanel Spacing="12" Margin="8">
+        <StackPanel Spacing="4">
+            <TextBlock Text="Title" FontWeight="SemiBold" />
+            <TextBox Text="{Binding Title}" />
+        </StackPanel>
+        <StackPanel Spacing="4">
+            <TextBlock Text="Subtitle" FontWeight="SemiBold" />
+            <TextBox Text="{Binding Subtitle}" />
+        </StackPanel>
+        <StackPanel Spacing="4">
+            <TextBlock Text="Show Shadow" FontWeight="SemiBold" />
+            <ToggleSwitch IsChecked="{Binding ShowShadow}" />
+        </StackPanel>
+        <StackPanel Spacing="4">
+            <TextBlock Text="Width" FontWeight="SemiBold" />
+            <NumericUpDown Value="{Binding CardWidth}" Minimum="200" Maximum="600" Increment="10" />
+        </StackPanel>
+    </StackPanel>
+</UserControl>

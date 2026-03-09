@@ -1,0 +1,28 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:ExampleUI.Stories.Buttons.PrimaryButton.Default"
+             x:Class="ExampleUI.Stories.Buttons.PrimaryButton.Default.Properties"
+             x:DataType="local:Story">
+    <StackPanel Spacing="12" Margin="8">
+        <StackPanel Spacing="4">
+            <TextBlock Text="Label" FontWeight="SemiBold" />
+            <TextBox Text="{Binding Label}" />
+        </StackPanel>
+        <StackPanel Spacing="4">
+            <TextBlock Text="Enabled" FontWeight="SemiBold" />
+            <ToggleSwitch IsChecked="{Binding IsButtonEnabled}" />
+        </StackPanel>
+        <StackPanel Spacing="4">
+            <TextBlock Text="Font Size" FontWeight="SemiBold" />
+            <NumericUpDown Value="{Binding ButtonFontSize}" Minimum="10" Maximum="32" Increment="1" />
+        </StackPanel>
+        <StackPanel Spacing="4">
+            <TextBlock Text="Click Log" FontWeight="SemiBold" />
+            <TextBox Text="{Binding ClickLog, Mode=OneWay}"
+                     IsReadOnly="True"
+                     AcceptsReturn="True"
+                     MaxHeight="150"
+                     TextWrapping="Wrap" />
+        </StackPanel>
+    </StackPanel>
+</UserControl>

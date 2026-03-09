@@ -1,0 +1,14 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="using:ExampleUI.Controls"
+             xmlns:local="using:ExampleUI.Stories.Layout.Card.Default"
+             x:Class="ExampleUI.Stories.Layout.Card.Default.Control"
+             x:DataType="local:Story">
+    <controls:Card x:Name="PART_Card"
+                   Title="{Binding Title}"
+                   Subtitle="{Binding Subtitle}"
+                   ShowShadow="{Binding ShowShadow}"
+                   Width="{Binding CardWidth}"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center" />
+</UserControl>

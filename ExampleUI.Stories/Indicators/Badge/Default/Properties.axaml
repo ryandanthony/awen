@@ -1,0 +1,16 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:ExampleUI.Stories.Indicators.Badge.Default"
+             x:Class="ExampleUI.Stories.Indicators.Badge.Default.Properties"
+             x:DataType="local:Story">
+    <StackPanel Spacing="12" Margin="8">
+        <StackPanel Spacing="4">
+            <TextBlock Text="Text" FontWeight="SemiBold" />
+            <TextBox Text="{Binding Text}" />
+        </StackPanel>
+        <StackPanel Spacing="4">
+            <TextBlock Text="Variant" FontWeight="SemiBold" />
+            <ComboBox x:Name="VariantComboBox" SelectedItem="{Binding Variant}" />
+        </StackPanel>
+    </StackPanel>
+</UserControl>

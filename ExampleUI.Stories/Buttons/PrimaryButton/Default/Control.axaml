@@ -1,0 +1,13 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="using:ExampleUI.Controls"
+             xmlns:local="using:ExampleUI.Stories.Buttons.PrimaryButton.Default"
+             x:Class="ExampleUI.Stories.Buttons.PrimaryButton.Default.Control"
+             x:DataType="local:Story">
+    <controls:PrimaryButton Label="{Binding Label}"
+                            IsEnabled="{Binding IsButtonEnabled}"
+                            ButtonFontSize="{Binding ButtonFontSize}"
+                            Command="{Binding RecordClick}"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
+</UserControl>

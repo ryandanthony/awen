@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <!-- CA1501: Avalonia controls have deep inheritance hierarchies by design -->
+    <!-- CA1716: Story namespaces use "Default", "Properties", etc. as directory/class names by convention -->
+    <NoWarn>$(NoWarn);CA1501;CA1716</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Avalonia.Themes.Fluent" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\src\Awen.Sdk\Awen.Sdk.csproj" />
+    <ProjectReference Include="..\..\mise\examples\ExampleUI\ExampleUI.csproj" />
+  </ItemGroup>
+
+</Project>

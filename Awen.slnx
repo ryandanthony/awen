@@ -3,6 +3,9 @@
     <Project Path="src/Awen.Sdk/Awen.Sdk.csproj" />
     <Project Path="src/Awen/Awen.csproj" />
   </Folder>
+  <Folder Name="/examples/">
+    <Project Path="ExampleUI.Stories/ExampleUI.Stories.csproj" />
+  </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Awen.Sdk.Tests/Awen.Sdk.Tests.csproj" />
     <Project Path="tests/Awen.Tests/Awen.Tests.csproj" />
