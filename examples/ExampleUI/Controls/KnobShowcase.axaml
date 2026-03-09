@@ -1,0 +1,118 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:ExampleUI.Controls"
+             x:Class="ExampleUI.Controls.KnobShowcase"
+             x:DataType="local:KnobShowcase">
+    <Border x:Name="PART_Border"
+            CornerRadius="8"
+            Padding="16"
+            Width="340"
+            BorderThickness="1"
+            BorderBrush="#E0E0E0"
+            Background="White">
+        <StackPanel Spacing="10">
+            <!-- Heading -->
+            <TextBlock Text="{Binding Heading, RelativeSource={RelativeSource AncestorType=local:KnobShowcase}}"
+                       FontSize="16"
+                       FontWeight="Bold"
+                       Margin="0,0,0,4"
+                       Foreground="#1A1A2E" />
+
+            <!-- Description -->
+            <TextBlock Text="{Binding Description, RelativeSource={RelativeSource AncestorType=local:KnobShowcase}}"
+                       FontSize="13"
+                       TextWrapping="Wrap"
+                       Margin="0,0,0,12"
+                       Opacity="0.7"
+                       Foreground="#1A1A2E" />
+
+            <!-- Separator -->
+            <Border Height="1"
+                    Background="#E0E0E0"
+                    Margin="0,4" />
+
+            <!-- Text Knob row -->
+            <Border Background="#F9F9F9"
+                    CornerRadius="4"
+                    Padding="8">
+                <DockPanel>
+                    <TextBlock Text="Text Knob"
+                               FontSize="11"
+                               FontWeight="SemiBold"
+                               Foreground="#555555"
+                               VerticalAlignment="Center"
+                               DockPanel.Dock="Left" />
+                    <TextBlock Text="Heading &amp; Description above"
+                               FontSize="11"
+                               Foreground="#999999"
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Center" />
+                </DockPanel>
+            </Border>
+
+            <!-- Bool Knob: Highlighted row -->
+            <Border x:Name="PART_HighlightRow"
+                    Background="#F5F5F5"
+                    CornerRadius="4"
+                    Padding="8">
+                <DockPanel>
+                    <TextBlock Text="Bool Knob: Highlighted"
+                               FontSize="11"
+                               FontWeight="SemiBold"
+                               Foreground="#555555"
+                               VerticalAlignment="Center"
+                               DockPanel.Dock="Left" />
+                    <TextBlock x:Name="PART_HighlightValue"
+                               Text="OFF"
+                               FontSize="11"
+                               Foreground="#999999"
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Center" />
+                </DockPanel>
+            </Border>
+
+            <!-- Enum Knob: Alignment row -->
+            <Border Background="#F9F9F9"
+                    CornerRadius="4"
+                    Padding="8">
+                <StackPanel>
+                    <TextBlock Text="Enum Knob: Alignment"
+                               FontSize="11"
+                               FontWeight="SemiBold"
+                               Foreground="#555555" />
+                    <TextBlock x:Name="PART_AlignmentValue"
+                               Text="Left"
+                               FontSize="13"
+                               FontWeight="SemiBold"
+                               Foreground="#6C63FF"
+                               Margin="0,4,0,0"
+                               HorizontalAlignment="Left" />
+                </StackPanel>
+            </Border>
+
+            <!-- Numeric Knob: Items row -->
+            <Border Background="#F9F9F9"
+                    CornerRadius="4"
+                    Padding="8">
+                <StackPanel>
+                    <DockPanel>
+                        <TextBlock Text="Numeric Knob: Items"
+                                   FontSize="11"
+                                   FontWeight="SemiBold"
+                                   Foreground="#555555"
+                                   VerticalAlignment="Center"
+                                   DockPanel.Dock="Left" />
+                        <TextBlock x:Name="PART_ItemCountLabel"
+                                   Text="3 item(s)"
+                                   FontSize="11"
+                                   Foreground="#999999"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Center" />
+                    </DockPanel>
+                    <StackPanel x:Name="PART_ItemsPanel"
+                                Margin="0,4,0,0" />
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </Border>
+</UserControl>

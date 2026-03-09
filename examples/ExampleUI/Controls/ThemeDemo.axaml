@@ -1,0 +1,40 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:ExampleUI.Controls"
+             x:Class="ExampleUI.Controls.ThemeDemo"
+             x:DataType="local:ThemeDemo">
+    <Border x:Name="PART_Border"
+            CornerRadius="8"
+            Padding="16"
+            Width="300"
+            BorderThickness="1">
+        <StackPanel>
+            <TextBlock x:Name="PART_Title"
+                       Text="{Binding Title, RelativeSource={RelativeSource AncestorType=local:ThemeDemo}}"
+                       FontSize="18"
+                       FontWeight="SemiBold"
+                       Margin="0,0,0,8" />
+            <TextBlock x:Name="PART_Message"
+                       Text="{Binding Message, RelativeSource={RelativeSource AncestorType=local:ThemeDemo}}"
+                       FontSize="13"
+                       TextWrapping="Wrap"
+                       Margin="0,0,0,16"
+                       Opacity="0.8" />
+            <Border x:Name="PART_SampleSurface"
+                    CornerRadius="4"
+                    Padding="12"
+                    Height="60"
+                    HorizontalAlignment="Stretch">
+                <TextBlock x:Name="PART_SampleText"
+                           Text="Sample content area"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
+            </Border>
+            <TextBlock x:Name="PART_SurfaceLabel"
+                       Text="Surface Variant"
+                       FontSize="12"
+                       HorizontalAlignment="Center"
+                       Margin="0,8,0,0" />
+        </StackPanel>
+    </Border>
+</UserControl>

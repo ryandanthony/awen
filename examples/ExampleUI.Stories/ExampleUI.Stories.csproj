@@ -13,8 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\Awen.Sdk\Awen.Sdk.csproj" />
-    <ProjectReference Include="..\..\mise\examples\ExampleUI\ExampleUI.csproj" />
+    <ProjectReference Include="..\..\src\Awen.Sdk\Awen.Sdk.csproj" />
+    <ProjectReference Include="..\ExampleUI\ExampleUI.csproj" />
   </ItemGroup>
 
 </Project>

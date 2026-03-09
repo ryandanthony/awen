@@ -1,0 +1,39 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:ExampleUI.Controls"
+             x:Class="ExampleUI.Controls.AlertBanner"
+             x:DataType="local:AlertBanner">
+    <Border x:Name="PART_Border"
+            CornerRadius="6"
+            Padding="12,8"
+            BorderThickness="1"
+            HorizontalAlignment="Stretch"
+            MinWidth="280">
+        <DockPanel>
+            <Button DockPanel.Dock="Right"
+                    Content="✖"
+                    Command="{Binding Dismiss, RelativeSource={RelativeSource AncestorType=local:AlertBanner}}"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Padding="4,0"
+                    Margin="8,0,0,0"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Right"
+                    Cursor="Hand"
+                    FontSize="16"
+                    IsVisible="{Binding IsDismissable, RelativeSource={RelativeSource AncestorType=local:AlertBanner}}" />
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Stretch">
+                <TextBlock x:Name="PART_Icon"
+                           FontSize="16"
+                           VerticalAlignment="Center"
+                           Margin="0,0,8,0" />
+                <TextBlock x:Name="PART_Message"
+                           Text="{Binding Message, RelativeSource={RelativeSource AncestorType=local:AlertBanner}}"
+                           VerticalAlignment="Center"
+                           TextWrapping="Wrap"
+                           HorizontalAlignment="Stretch" />
+            </StackPanel>
+        </DockPanel>
+    </Border>
+</UserControl>

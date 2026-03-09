@@ -1,0 +1,18 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:ExampleUI.Controls"
+             x:Class="ExampleUI.Controls.Badge"
+             x:DataType="local:Badge">
+    <Border x:Name="PART_Border"
+            CornerRadius="12"
+            Padding="8,2"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center">
+        <TextBlock x:Name="PART_Text"
+                   Text="{Binding Text, RelativeSource={RelativeSource AncestorType=local:Badge}}"
+                   FontSize="12"
+                   FontWeight="Bold"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center" />
+    </Border>
+</UserControl>

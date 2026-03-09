@@ -1,0 +1,26 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:ExampleUI.Controls"
+             x:Class="ExampleUI.Controls.Card"
+             x:DataType="local:Card">
+    <Border x:Name="PART_Border"
+            CornerRadius="8"
+            Padding="16"
+            BorderThickness="1"
+            Width="{Binding Width, RelativeSource={RelativeSource AncestorType=local:Card}}">
+        <StackPanel Spacing="0">
+            <TextBlock x:Name="PART_Title"
+                       Text="{Binding Title, RelativeSource={RelativeSource AncestorType=local:Card}}"
+                       FontSize="18"
+                       FontWeight="Bold"
+                       Margin="0,0,0,4" />
+            <TextBlock x:Name="PART_Subtitle"
+                       Text="{Binding Subtitle, RelativeSource={RelativeSource AncestorType=local:Card}}"
+                       FontSize="13"
+                       Opacity="0.6"
+                       Margin="0,0,0,12" />
+            <ContentControl x:Name="PART_ContentArea"
+                            HorizontalAlignment="Stretch" />
+        </StackPanel>
+    </Border>
+</UserControl>

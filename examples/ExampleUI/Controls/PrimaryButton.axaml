@@ -1,0 +1,20 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:ExampleUI.Controls"
+             x:Class="ExampleUI.Controls.PrimaryButton"
+             x:DataType="local:PrimaryButton">
+    <Button x:Name="PART_Button"
+            Click="OnInnerButtonClick"
+            Content="{Binding Label, RelativeSource={RelativeSource AncestorType=local:PrimaryButton}}"
+            FontSize="{Binding ButtonFontSize, RelativeSource={RelativeSource AncestorType=local:PrimaryButton}}"
+            IsEnabled="{Binding IsEnabled, RelativeSource={RelativeSource AncestorType=local:PrimaryButton}}"
+            Command="{Binding Command, RelativeSource={RelativeSource AncestorType=local:PrimaryButton}}"
+            CommandParameter="{Binding CommandParameter, RelativeSource={RelativeSource AncestorType=local:PrimaryButton}}"
+            HorizontalContentAlignment="Center"
+            VerticalContentAlignment="Center"
+            Padding="24,12"
+            CornerRadius="6"
+            FontWeight="SemiBold"
+            Foreground="White"
+            Cursor="Hand" />
+</UserControl>
