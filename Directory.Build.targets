@@ -1,0 +1,9 @@
+<Project>
+  <!-- Remove the NuGet package's stylecop.json, keeping only the repo-root copy.
+       This must be in .targets (not .props) because NuGet package props are imported after Directory.Build.props. -->
+  <Target Name="DeduplicateStylecopJson" BeforeTargets="CoreCompile">
+    <ItemGroup>
+      <AdditionalFiles Remove="%(Identity)" Condition="'%(Filename)%(Extension)' == 'stylecop.json' and '%(Identity)' != '$(MSBuildThisFileDirectory)stylecop.json'" />
+    </ItemGroup>
+  </Target>
+</Project>

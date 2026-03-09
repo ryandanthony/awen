@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Awen.Sdk/Awen.Sdk.csproj" />
+    <Project Path="src/Awen/Awen.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Awen.Sdk.Tests/Awen.Sdk.Tests.csproj" />
+    <Project Path="tests/Awen.Tests/Awen.Tests.csproj" />
+  </Folder>
+</Solution>

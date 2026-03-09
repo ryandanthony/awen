@@ -1,0 +1,44 @@
+mode: ContinuousDelivery
+next-version: 0.1.0
+tag-prefix: v
+strategies:
+  - Mainline
+  - TaggedCommit
+
+assembly-versioning-scheme: MajorMinor
+assembly-file-versioning-scheme: MajorMinorPatch
+assembly-informational-format: '{SemVer}+{ShortSha}'
+
+major-version-bump-message: '^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\(.*\))?!:.*'
+minor-version-bump-message: '^feat(\(.*\))?:.*'
+patch-version-bump-message: '^fix(\(.*\))?:.*'
+no-bump-message: '^(docs|style|chore|ci|build|test|refactor)(\(.*\))?:.*'
+
+branches:
+  main:
+    regex: ^main$
+    mode: ContinuousDelivery
+    label: ''
+    increment: Patch
+    prevent-increment:
+      of-merged-branch: true
+    track-merge-target: false
+    is-release-branch: true
+    is-main-branch: true
+  feature:
+    regex: ^(feature|feat)[/-]
+    mode: ContinuousDelivery
+    label: '{BranchName}'
+    increment: Inherit
+  spec:
+    regex: ^\d{3}-
+    mode: ContinuousDelivery
+    label: alpha
+    increment: Inherit
+    source-branches:
+      - main
+  pull-request:
+    regex: ^(pull|pull\-request|pr)[/-]
+    mode: ContinuousDelivery
+    label: pr
+    increment: Inherit

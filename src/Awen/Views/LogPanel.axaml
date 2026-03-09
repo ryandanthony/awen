@@ -1,0 +1,45 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Awen.ViewModels"
+             x:Class="Awen.Views.LogPanel"
+             x:DataType="vm:LogPanelViewModel">
+    <Grid RowDefinitions="Auto,*">
+        <!-- Toggle bar -->
+        <Button Grid.Row="0"
+                Content="Log"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Left"
+                Command="{Binding ToggleExpandedCommand}"
+                Classes="log-toggle" />
+
+        <!-- Log entries list (visible when expanded) -->
+        <ListBox Grid.Row="1"
+                 ItemsSource="{Binding Entries}"
+                 IsVisible="{Binding IsExpanded}"
+                 MaxHeight="200"
+                 ScrollViewer.VerticalScrollBarVisibility="Auto">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBlock Text="{Binding Timestamp, StringFormat='{}{0:HH:mm:ss}'}"
+                                   Foreground="Gray"
+                                   FontFamily="Cascadia Mono,Consolas,Courier New"
+                                   FontSize="12" />
+                        <TextBlock Text="{Binding Level}"
+                                   FontWeight="Bold"
+                                   FontFamily="Cascadia Mono,Consolas,Courier New"
+                                   FontSize="12" />
+                        <TextBlock Text="{Binding Category}"
+                                   Foreground="DimGray"
+                                   FontFamily="Cascadia Mono,Consolas,Courier New"
+                                   FontSize="12" />
+                        <TextBlock Text="{Binding Message}"
+                                   FontFamily="Cascadia Mono,Consolas,Courier New"
+                                   FontSize="12"
+                                   TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+</UserControl>

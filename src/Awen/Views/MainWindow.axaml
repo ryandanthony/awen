@@ -1,0 +1,121 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Awen.ViewModels"
+        xmlns:views="using:Awen.Views"
+        xmlns:conv="using:Awen.Converters"
+        x:Class="Awen.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Title="Awen — Component Preview"
+        Width="1400"
+        Height="900"
+        MinWidth="900"
+        MinHeight="600"
+        Background="{DynamicResource LightBackground}"
+        Foreground="{DynamicResource LightText}">
+    <Window.Resources>
+        <conv:InfinityToNullConverter x:Key="InfinityToNull" />
+    </Window.Resources>
+    <DockPanel Background="{DynamicResource LightBackground}">
+        <!-- Bottom log panel (collapsible) -->
+        <views:LogPanel DockPanel.Dock="Bottom"
+                        DataContext="{Binding LogPanel}" />
+
+        <!-- Top toolbar with modern styling -->
+        <Border DockPanel.Dock="Top"
+                Background="{DynamicResource LightSurface}"
+                BorderBrush="{DynamicResource LightBorder}"
+                BorderThickness="0,0,0,1"
+                Padding="12,8">
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        Spacing="12">
+                <!-- Viewport presets -->
+                <TextBlock Text="Viewport:"
+                           VerticalAlignment="Center"
+                           Foreground="{DynamicResource LightTextSecondary}"
+                           FontSize="12"
+                           FontWeight="500" />
+                <ComboBox ItemsSource="{x:Static vm:PreviewViewModel.ViewportPresets}"
+                          SelectedItem="{Binding Preview.SelectedPreset}"
+                          Width="110"
+                          VerticalAlignment="Center"
+                          FontSize="12" />
+                
+                <!-- Viewport dimensions display -->
+                <StackPanel Orientation="Horizontal"
+                            Spacing="4"
+                            VerticalAlignment="Center">
+                    <TextBlock Text="{Binding Preview.DisplayViewportWidth, StringFormat={}{0:F0}}"
+                               Foreground="{DynamicResource LightText}"
+                               FontSize="12"
+                               VerticalAlignment="Center"
+                               MinWidth="50"
+                               TextAlignment="Right" />
+                    <TextBlock Text="×"
+                               VerticalAlignment="Center"
+                               Foreground="{DynamicResource LightTextTertiary}" />
+                    <TextBlock Text="{Binding Preview.DisplayViewportHeight, StringFormat={}{0:F0}}"
+                               Foreground="{DynamicResource LightText}"
+                               FontSize="12"
+                               VerticalAlignment="Center"
+                               MinWidth="50"
+                               TextAlignment="Left" />
+                </StackPanel>
+
+                <!-- Separator -->
+                <Border Width="1"
+                        Height="24"
+                        BorderBrush="{DynamicResource LightBorder}"
+                        BorderThickness="1,0,0,0" />
+
+                <!-- Theme toggle -->
+                <TextBlock Text="Theme:"
+                           VerticalAlignment="Center"
+                           Foreground="{DynamicResource LightTextSecondary}"
+                           FontSize="12"
+                           FontWeight="500" />
+                <ToggleSwitch IsChecked="{Binding Preview.IsDarkTheme}"
+                              OnContent="Dark"
+                              OffContent="Light" />
+            </StackPanel>
+        </Border>
+
+        <!-- Main 3-panel layout -->
+        <Grid ColumnDefinitions="280,4,*,4,320">
+            <!-- Left sidebar -->
+            <Border Grid.Column="0"
+                    Background="{DynamicResource LightBackground}"
+                    BorderBrush="{DynamicResource LightBorder}"
+                    BorderThickness="0,0,1,0"
+                    Padding="12">
+                <views:SidebarView DataContext="{Binding Sidebar}" />
+            </Border>
+
+            <!-- Left splitter -->
+            <GridSplitter Grid.Column="1"
+                          Background="{DynamicResource LightBorder}"
+                          ResizeDirection="Columns" />
+
+            <!-- Center preview canvas -->
+            <Border Grid.Column="2"
+                    Background="{DynamicResource LightSurface}"
+                    Padding="24">
+                <views:PreviewCanvas DataContext="{Binding Preview}" />
+            </Border>
+
+            <!-- Right splitter -->
+            <GridSplitter Grid.Column="3"
+                          Background="{DynamicResource LightBorder}"
+                          ResizeDirection="Columns" />
+
+            <!-- Right property panel -->
+            <Border Grid.Column="4"
+                    Background="{DynamicResource LightBackground}"
+                    BorderBrush="{DynamicResource LightBorder}"
+                    BorderThickness="1,0,0,0"
+                    Padding="12">
+                <views:PropertyPanel DataContext="{Binding PropertyPanel}" />
+            </Border>
+        </Grid>
+    </DockPanel>
+</Window>

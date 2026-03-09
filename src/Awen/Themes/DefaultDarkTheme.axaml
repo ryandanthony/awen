@@ -1,0 +1,27 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Awen UI Theme - Dark variant (overrides light colors for sidebar, toolbar, panels) -->
+    <SolidColorBrush x:Key="LightBackground" Color="#121212" />
+    <SolidColorBrush x:Key="LightSurface" Color="#1E1E1E" />
+    <SolidColorBrush x:Key="LightBorder" Color="#373737" />
+    <SolidColorBrush x:Key="LightText" Color="#E6E1E5" />
+    <SolidColorBrush x:Key="LightTextSecondary" Color="#C4C4CC" />
+    <SolidColorBrush x:Key="LightTextTertiary" Color="#A0A0A8" />
+    <SolidColorBrush x:Key="LightSurfaceVariant" Color="#2C2C31" />
+    
+    <!-- Preview Canvas Theme - Dark variant (for previewed components in dark theme) -->
+    <SolidColorBrush x:Key="AwenPreviewBackground" Color="#1B1B1F" />
+    <SolidColorBrush x:Key="AwenPreviewForeground" Color="#E6E1E5" />
+    <SolidColorBrush x:Key="AwenPreviewBorder" Color="#49454F" />
+    <SolidColorBrush x:Key="AwenBackground" Color="#1E1E1E" />
+    <SolidColorBrush x:Key="AwenForeground" Color="#E6E1E5" />
+    <SolidColorBrush x:Key="AwenBorder" Color="#373737" />
+    <SolidColorBrush x:Key="AwenSurfaceVariant" Color="#2C2C31" />
+    <SolidColorBrush x:Key="AwenOnSurfaceVariant" Color="#C4C4CC" />
+    
+    <!-- Status colors (light variants for dark theme) -->
+    <SolidColorBrush x:Key="ColorSuccess" Color="#66BB6A" />
+    <SolidColorBrush x:Key="ColorWarning" Color="#FFA726" />
+    <SolidColorBrush x:Key="ColorError" Color="#EF5350" />
+    <SolidColorBrush x:Key="ColorInfo" Color="#42A5F5" />
+</ResourceDictionary>

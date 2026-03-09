@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "Awen (ExampleUI)": {
+      "commandName": "Project",
+      "commandLineArgs": "--dir examples/ExampleUI.Stories/bin/Debug/net10.0/",
+      "workingDirectory": "$(SolutionDir)"
+    }
+  }
+}

@@ -1,0 +1,89 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Awen.ViewModels"
+             xmlns:conv="using:Awen.Converters"
+             x:Class="Awen.Views.PreviewCanvas"
+             x:DataType="vm:PreviewViewModel">
+    <UserControl.Resources>
+        <conv:InfinityToNaNConverter x:Key="InfinityToNaN" />
+    </UserControl.Resources>
+    <ThemeVariantScope RequestedThemeVariant="{Binding ThemeVariant}">
+        <Panel Background="{DynamicResource LightSurface}">
+            <!-- Empty state: no story selected -->
+            <StackPanel VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Spacing="8"
+                        IsVisible="{Binding !SelectedStory}">
+                <TextBlock Text="👀"
+                           FontSize="32"
+                           HorizontalAlignment="Center" />
+                <TextBlock Text="Select a story to preview"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"
+                           Foreground="{DynamicResource LightTextSecondary}"
+                           FontSize="13" />
+                <TextBlock Text="Choose a component from the left sidebar"
+                           HorizontalAlignment="Center"
+                           Foreground="{DynamicResource LightTextTertiary}"
+                           FontSize="11"
+                           Opacity="0.7" />
+            </StackPanel>
+
+            <!-- Error overlay -->
+            <StackPanel VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        IsVisible="{Binding HasError}"
+                        Spacing="12"
+                        MaxWidth="500">
+                <TextBlock Text="⚠️ Error"
+                           FontWeight="Bold"
+                           Foreground="{DynamicResource ColorError}"
+                           FontSize="14"
+                           HorizontalAlignment="Center" />
+                <Border Background="{DynamicResource LightBackground}"
+                        BorderBrush="{DynamicResource ColorError}"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        Padding="12">
+                    <TextBlock Text="{Binding ErrorMessage}"
+                               TextWrapping="Wrap"
+                               Foreground="{DynamicResource LightText}"
+                               FontSize="12"
+                               LineHeight="1.5" />
+                </Border>
+            </StackPanel>
+
+            <!-- Normal preview content with viewport constraints -->
+            <Border x:Name="PART_PreviewBorder"
+                    IsVisible="{Binding !HasError}"
+                    Width="{Binding ViewportWidth, Converter={StaticResource InfinityToNaN}}"
+                    Height="{Binding ViewportHeight, Converter={StaticResource InfinityToNaN}}"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Background="{DynamicResource LightBackground}"
+                    CornerRadius="4">
+                <DockPanel>
+                    <!-- Description at bottom -->
+                    <Border DockPanel.Dock="Bottom"
+                            Background="{DynamicResource LightSurface}"
+                            BorderBrush="{DynamicResource LightBorder}"
+                            BorderThickness="0,1,0,0"
+                            Padding="12,8"
+                            IsVisible="{Binding Description, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                        <TextBlock Text="{Binding Description}"
+                                   Foreground="{DynamicResource LightTextSecondary}"
+                                   FontSize="11"
+                                   TextWrapping="Wrap"
+                                   LineHeight="1.4" />
+                    </Border>
+
+                    <!-- Preview control fills available space -->
+                    <ContentControl Content="{Binding PreviewContent}"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch"
+                                    Margin="12" />
+                </DockPanel>
+            </Border>
+        </Panel>
+    </ThemeVariantScope>
+</UserControl>

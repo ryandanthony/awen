@@ -1,0 +1,40 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+
+  <ItemGroup Label="Code Quality">
+    <PackageVersion Include="FestinaLente.CodeStandards" Version="1.1.10" />
+    <PackageVersion Include="GitVersion.MsBuild" Version="6.6.0" />
+  </ItemGroup>
+
+  <ItemGroup Label="Backend - Critter Stack">
+    <PackageVersion Include="Marten" Version="8.22.2" />
+    <PackageVersion Include="WolverineFx" Version="5.16.4" />
+    <PackageVersion Include="WolverineFx.Marten" Version="5.16.4" />
+    <PackageVersion Include="NATS.Net" Version="2.7.2" />
+  </ItemGroup>
+
+  <ItemGroup Label="UI - Avalonia">
+    <PackageVersion Include="Avalonia" Version="11.3.12" />
+    <PackageVersion Include="Avalonia.Desktop" Version="11.3.12" />
+    <PackageVersion Include="Avalonia.Themes.Fluent" Version="11.3.12" />
+    <PackageVersion Include="Avalonia.Fonts.Inter" Version="11.3.12" />
+    <PackageVersion Include="Avalonia.Markup.Xaml.Loader" Version="11.3.12" />
+  </ItemGroup>
+
+  <ItemGroup Label="CLI">
+    <PackageVersion Include="System.CommandLine" Version="2.0.3" />
+  </ItemGroup>
+
+  <ItemGroup Label="Testing">
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.3.0" />
+    <PackageVersion Include="Microsoft.Extensions.Diagnostics.Testing" Version="10.3.0" />
+    <PackageVersion Include="xunit" Version="2.9.3" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
+    <PackageVersion Include="coverlet.collector" Version="8.0.0" />
+    <PackageVersion Include="Alba" Version="8.4.0" />
+    <PackageVersion Include="Testcontainers" Version="4.10.0" />
+    <PackageVersion Include="Testcontainers.PostgreSql" Version="4.10.0" />
+  </ItemGroup>
+</Project>

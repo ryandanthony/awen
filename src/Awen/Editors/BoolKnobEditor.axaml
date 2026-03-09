@@ -1,0 +1,13 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Awen.ViewModels"
+             x:Class="Awen.Editors.BoolKnobEditor"
+             x:DataType="vm:KnobDescriptor">
+    <StackPanel Spacing="6">
+        <TextBlock Text="{Binding Label}"
+                   FontWeight="SemiBold"
+                   FontSize="11"
+                   Foreground="{DynamicResource LightText}" />
+        <ToggleSwitch IsChecked="{Binding BoolValue}" />
+    </StackPanel>
+</UserControl>

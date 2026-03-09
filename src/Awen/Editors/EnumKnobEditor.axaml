@@ -1,0 +1,33 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:Awen.ViewModels"
+             x:Class="Awen.Editors.EnumKnobEditor"
+             x:DataType="vm:KnobDescriptor">
+    <UserControl.Styles>
+        <Style Selector="ComboBox /template/ ContentControl#ContentPresenter">
+            <Setter Property="Foreground" Value="{DynamicResource LightText}" />
+        </Style>
+        <Style Selector="ComboBoxItem">
+            <Setter Property="Foreground" Value="{DynamicResource LightText}" />
+        </Style>
+        <Style Selector="ComboBoxItem:selected /template/ ContentPresenter">
+            <Setter Property="Foreground" Value="{DynamicResource LightText}" />
+        </Style>
+    </UserControl.Styles>
+    <StackPanel Spacing="6">
+        <TextBlock Text="{Binding Label}"
+                   FontWeight="SemiBold"
+                   FontSize="11"
+                   Foreground="{DynamicResource LightText}" />
+        <ComboBox x:Name="PART_ComboBox"
+                  Background="{DynamicResource LightSurface}"
+                  Foreground="{DynamicResource LightText}"
+                  BorderBrush="{DynamicResource LightBorder}"
+                  BorderThickness="1"
+                  Padding="6,4"
+                  CornerRadius="3"
+                  FontSize="12"
+                  HorizontalAlignment="Stretch"
+                  MinWidth="120" />
+    </StackPanel>
+</UserControl>

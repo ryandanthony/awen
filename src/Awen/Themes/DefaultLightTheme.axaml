@@ -1,0 +1,27 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Awen UI Theme - Light variant (for sidebar, toolbar, panels) -->
+    <SolidColorBrush x:Key="LightBackground" Color="#FAFAFA" />
+    <SolidColorBrush x:Key="LightSurface" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="LightBorder" Color="#E0E0E0" />
+    <SolidColorBrush x:Key="LightText" Color="#1B1B1F" />
+    <SolidColorBrush x:Key="LightTextSecondary" Color="#49454F" />
+    <SolidColorBrush x:Key="LightTextTertiary" Color="#79747E" />
+    <SolidColorBrush x:Key="LightSurfaceVariant" Color="#F5F5F5" />
+    
+    <!-- Preview Canvas Theme - Light variant (for previewed components in light theme) -->
+    <SolidColorBrush x:Key="AwenPreviewBackground" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="AwenPreviewForeground" Color="#1B1B1F" />
+    <SolidColorBrush x:Key="AwenPreviewBorder" Color="#E0E0E0" />
+    <SolidColorBrush x:Key="AwenBackground" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="AwenForeground" Color="#1B1B1F" />
+    <SolidColorBrush x:Key="AwenBorder" Color="#E0E0E0" />
+    <SolidColorBrush x:Key="AwenSurfaceVariant" Color="#F5F5F5" />
+    <SolidColorBrush x:Key="AwenOnSurfaceVariant" Color="#49454F" />
+    
+    <!-- Status colors -->
+    <SolidColorBrush x:Key="ColorSuccess" Color="#2E7D32" />
+    <SolidColorBrush x:Key="ColorWarning" Color="#F57C00" />
+    <SolidColorBrush x:Key="ColorError" Color="#C62828" />
+    <SolidColorBrush x:Key="ColorInfo" Color="#1565C0" />
+</ResourceDictionary>

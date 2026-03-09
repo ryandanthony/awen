@@ -416,3 +416,10 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# Universal
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
+.idea/

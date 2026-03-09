@@ -1,0 +1,24 @@
+{
+  "$schema": "https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json",
+  "settings": {
+    "documentationRules": {
+      "companyName": "Ryan Anthony",
+      "copyrightText": "Copyright (c) {companyName}. All rights reserved.",
+      "documentPrivateElements": false,
+      "documentPrivateFields": false,
+      "fileNamingConvention": "stylecop",
+      "documentExposedElements": true,
+      "documentInterfaces": true,
+      "documentInternalElements": false,
+      "xmlHeader": true,
+      "headerDecoration": "-----------------------------------------------------------------------"
+    },
+    "namingRules": {
+      "allowCommonHungarianPrefixes": false,
+      "tupleElementNameCasing": "camelCase"
+    },
+    "orderingRules": {
+      "usingDirectivesPlacement": "outsideNamespace"
+    }
+  }
+}
