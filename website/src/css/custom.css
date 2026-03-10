@@ -1,0 +1,89 @@
+/**
+ * Awen Documentation Theme
+ * Avalonia-inspired colors
+ *
+ * Color Palette:
+ * - Primary: #6c5ce7 (purple)
+ * - Background: #0d1117
+ * - Text: #eaeaea
+ * - Border: #cccccc
+ */
+
+/* Light mode */
+:root {
+  --ifm-color-primary: #6c5ce7;
+  --ifm-color-primary-dark: #5a49e3;
+  --ifm-color-primary-darker: #5140e1;
+  --ifm-color-primary-darkest: #3726d9;
+  --ifm-color-primary-light: #7e6feb;
+  --ifm-color-primary-lighter: #8779ed;
+  --ifm-color-primary-lightest: #a69cf3;
+  --ifm-code-font-size: 95%;
+  --ifm-font-family-monospace: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+}
+
+/* Dark mode */
+[data-theme='dark'] {
+  --ifm-color-primary: #a29bfe;
+  --ifm-color-primary-dark: #8b82fe;
+  --ifm-color-primary-darker: #7d73fd;
+  --ifm-color-primary-darkest: #574bfd;
+  --ifm-color-primary-light: #b9b4fe;
+  --ifm-color-primary-lighter: #c8c4fe;
+  --ifm-color-primary-lightest: #eeedff;
+  --ifm-background-color: #0d1117;
+  --ifm-background-surface-color: #161b22;
+  --ifm-navbar-background-color: #0d1117;
+  --ifm-footer-background-color: #0d1117;
+  --ifm-code-background: #1a1f26;
+  --docusaurus-highlighted-code-line-bg: rgba(108, 92, 231, 0.15);
+}
+
+/* Code block styling */
+[data-theme='dark'] .prism-code {
+  background-color: #0d1117;
+}
+
+[data-theme='dark'] code {
+  background-color: #1a1f26;
+  border: 1px solid #30363d;
+}
+
+/* Hero section styling for landing page */
+.hero--primary {
+  --ifm-hero-background-color: var(--ifm-background-color);
+  --ifm-hero-text-color: var(--ifm-font-color-base);
+}
+
+[data-theme='dark'] .hero--primary {
+  background: linear-gradient(180deg, #0d1117 0%, #161b22 100%);
+}
+
+/* Navbar tweaks */
+[data-theme='dark'] .navbar {
+  border-bottom: 1px solid #30363d;
+}
+
+/* Footer tweaks */
+[data-theme='dark'] .footer {
+  border-top: 1px solid #30363d;
+}
+
+/* Sidebar tweaks */
+[data-theme='dark'] .menu__link--active {
+  color: #a29bfe;
+}
+
+/* Table styling */
+[data-theme='dark'] table {
+  border-color: #30363d;
+}
+
+[data-theme='dark'] th {
+  background-color: #161b22;
+}
+
+[data-theme='dark'] tr:nth-child(2n) {
+  background-color: #0d1117;
+}

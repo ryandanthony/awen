@@ -5,6 +5,7 @@
 // -----------------------------------------------------------------------
 
 using System.ComponentModel;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using Awen.Discovery;
 
@@ -56,6 +57,11 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged, IDisposable
     /// Gets the parsed CLI options.
     /// </summary>
     public AwenOptions Options { get; }
+
+    /// <summary>
+    /// Gets the application version string from the assembly informational version.
+    /// </summary>
+    public static string Version { get; } = GetVersion();
 
     /// <summary>
     /// Gets the log panel view model.
@@ -216,6 +222,13 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged, IDisposable
             Preview.SelectedStory = Sidebar.SelectedStory;
             PropertyPanel.LoadStory(Sidebar.SelectedStory);
         }
+    }
+
+    private static string GetVersion()
+    {
+        var attr = typeof(MainWindowViewModel).Assembly
+            .GetCustomAttribute<AssemblyInformationalVersionAttribute>();
+        return attr?.InformationalVersion ?? "dev";
     }
 
     private static void DeleteStateFile(string filePath)

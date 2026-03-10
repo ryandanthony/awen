@@ -16,6 +16,19 @@
         <conv:InfinityToNullConverter x:Key="InfinityToNull" />
     </Window.Resources>
     <DockPanel Background="{DynamicResource LightBackground}">
+        <!-- Bottom status bar with version -->
+        <Border DockPanel.Dock="Bottom"
+                Background="{DynamicResource LightSurface}"
+                BorderBrush="{DynamicResource LightBorder}"
+                BorderThickness="0,1,0,0"
+                Padding="8,4">
+            <TextBlock Text="{Binding Version, StringFormat='Awen v{0}'}"
+                       Foreground="{DynamicResource LightTextTertiary}"
+                       FontSize="11"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Left" />
+        </Border>
+
         <!-- Bottom log panel (collapsible) -->
         <views:LogPanel DockPanel.Dock="Bottom"
                         DataContext="{Binding LogPanel}" />

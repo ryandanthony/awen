@@ -46,6 +46,39 @@ public sealed class PreviewViewModelViewportTests
     }
 
     [Fact]
+    public void SelectLaptopPreset_AppliesDimensions()
+    {
+        var vm = new PreviewViewModel();
+
+        vm.SelectedPreset = "Laptop";
+
+        Assert.Equal(1366, vm.ViewportWidth);
+        Assert.Equal(768, vm.ViewportHeight);
+    }
+
+    [Fact]
+    public void SelectDesktopPreset_AppliesDimensions()
+    {
+        var vm = new PreviewViewModel();
+
+        vm.SelectedPreset = "Desktop";
+
+        Assert.Equal(1920, vm.ViewportWidth);
+        Assert.Equal(1080, vm.ViewportHeight);
+    }
+
+    [Fact]
+    public void SelectWidescreenPreset_AppliesDimensions()
+    {
+        var vm = new PreviewViewModel();
+
+        vm.SelectedPreset = "Widescreen";
+
+        Assert.Equal(2560, vm.ViewportWidth);
+        Assert.Equal(1440, vm.ViewportHeight);
+    }
+
+    [Fact]
     public void SelectResponsivePreset_SetsUnconstrained()
     {
         var vm = new PreviewViewModel
@@ -118,6 +151,9 @@ public sealed class PreviewViewModelViewportTests
         Assert.Contains("Responsive", presets);
         Assert.Contains("Phone", presets);
         Assert.Contains("Tablet", presets);
+        Assert.Contains("Laptop", presets);
+        Assert.Contains("Desktop", presets);
+        Assert.Contains("Widescreen", presets);
     }
 
     [Fact]

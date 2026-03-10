@@ -20,13 +20,16 @@ public sealed class PreviewViewModel : INotifyPropertyChanged
     /// <summary>
     /// Available viewport preset names.
     /// </summary>
-    public static readonly IReadOnlyList<string> ViewportPresets = ["Responsive", "Phone", "Tablet"];
+    public static readonly IReadOnlyList<string> ViewportPresets = ["Responsive", "Phone", "Tablet", "Laptop", "Desktop", "Widescreen"];
 
     private static readonly Dictionary<string, (double width, double height)> PresetDimensions = new(StringComparer.Ordinal)
     {
         ["Responsive"] = (double.PositiveInfinity, double.PositiveInfinity),
         ["Phone"] = (375, 812),
         ["Tablet"] = (768, 1024),
+        ["Laptop"] = (1366, 768),
+        ["Desktop"] = (1920, 1080),
+        ["Widescreen"] = (2560, 1440),
     };
 
     private StoryDescriptor? _selectedStory;
