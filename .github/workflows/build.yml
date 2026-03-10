@@ -51,18 +51,22 @@ jobs:
           if command -v jq &> /dev/null; then
             SEMVER=$(echo "$VERSION_JSON" | jq -r '.SemVer')
             FULLSEMVER=$(echo "$VERSION_JSON" | jq -r '.FullSemVer')
+            NUGETVER=$(echo "$VERSION_JSON" | jq -r '.NuGetVersionV2')
           else
             SEMVER=$(echo "$VERSION_JSON" | grep -oP '"SemVer"\s*:\s*"\K[^"]+')
             FULLSEMVER=$(echo "$VERSION_JSON" | grep -oP '"FullSemVer"\s*:\s*"\K[^"]+')
+            NUGETVER=$(echo "$VERSION_JSON" | grep -oP '"NuGetVersionV2"\s*:\s*"\K[^"]+')
           fi
 
           echo "semVer=$SEMVER" >> $GITHUB_OUTPUT
           echo "fullSemVer=$FULLSEMVER" >> $GITHUB_OUTPUT
+          echo "nugetVer=$NUGETVER" >> $GITHUB_OUTPUT
 
       - name: Display Version
         run: |
           echo "SemVer: ${{ steps.gitversion.outputs.semVer }}"
           echo "FullSemVer: ${{ steps.gitversion.outputs.fullSemVer }}"
+          echo "NuGetVersionV2: ${{ steps.gitversion.outputs.nugetVer }}"
 
       # Configure GitHub Packages NuGet source with credentials
       - name: Configure NuGet Credentials
@@ -136,7 +140,7 @@ jobs:
           dotnet pack src/Awen.Sdk/Awen.Sdk.csproj \
             --no-build \
             --configuration Release \
-            /p:PackageVersion=${{ steps.gitversion.outputs.semVer }}
+            /p:PackageVersion=${{ steps.gitversion.outputs.nugetVer }}
 
       # Create GitHub Release with binaries (main branch only)
       - name: Create GitHub Release
