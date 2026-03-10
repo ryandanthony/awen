@@ -139,8 +139,7 @@ jobs:
         run: |
           dotnet pack src/Awen.Sdk/Awen.Sdk.csproj \
             --no-build \
-            --configuration Release \
-            /p:PackageVersion=${{ steps.gitversion.outputs.nugetVer }}
+            --configuration Release
 
       # Create GitHub Release with binaries (main branch only)
       - name: Create GitHub Release
