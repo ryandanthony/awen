@@ -52,21 +52,25 @@ jobs:
             SEMVER=$(echo "$VERSION_JSON" | jq -r '.SemVer')
             FULLSEMVER=$(echo "$VERSION_JSON" | jq -r '.FullSemVer')
             NUGETVER=$(echo "$VERSION_JSON" | jq -r '.NuGetVersionV2')
+            MAJORMINORPATCH=$(echo "$VERSION_JSON" | jq -r '.MajorMinorPatch')
           else
             SEMVER=$(echo "$VERSION_JSON" | grep -oP '"SemVer"\s*:\s*"\K[^"]+')
             FULLSEMVER=$(echo "$VERSION_JSON" | grep -oP '"FullSemVer"\s*:\s*"\K[^"]+')
             NUGETVER=$(echo "$VERSION_JSON" | grep -oP '"NuGetVersionV2"\s*:\s*"\K[^"]+')
+            MAJORMINORPATCH=$(echo "$VERSION_JSON" | grep -oP '"MajorMinorPatch"\s*:\s*"\K[^"]+')
           fi
 
           echo "semVer=$SEMVER" >> $GITHUB_OUTPUT
           echo "fullSemVer=$FULLSEMVER" >> $GITHUB_OUTPUT
           echo "nugetVer=$NUGETVER" >> $GITHUB_OUTPUT
+          echo "majorMinorPatch=$MAJORMINORPATCH" >> $GITHUB_OUTPUT
 
       - name: Display Version
         run: |
           echo "SemVer: ${{ steps.gitversion.outputs.semVer }}"
           echo "FullSemVer: ${{ steps.gitversion.outputs.fullSemVer }}"
           echo "NuGetVersionV2: ${{ steps.gitversion.outputs.nugetVer }}"
+          echo "MajorMinorPatch: ${{ steps.gitversion.outputs.majorMinorPatch }}"
 
       # Configure GitHub Packages NuGet source with credentials
       - name: Configure NuGet Credentials
@@ -146,8 +150,8 @@ jobs:
         if: github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ steps.gitversion.outputs.semVer }}
-          name: v${{ steps.gitversion.outputs.semVer }}
+          tag_name: v${{ steps.gitversion.outputs.majorMinorPatch }}
+          name: v${{ steps.gitversion.outputs.majorMinorPatch }}
           generate_release_notes: true
           files: |
             publish/linux-x64/Awen
