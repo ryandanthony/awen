@@ -17,7 +17,7 @@ no-bump-message: '^(docs|style|chore|ci|build|test|refactor)(\(.*\))?:.*'
 branches:
   main:
     regex: ^main$
-    mode: ContinuousDelivery
+    mode: ContinuousDeployment
     label: ''
     increment: Patch
     prevent-increment:

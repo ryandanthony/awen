@@ -36,42 +36,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nuget-
 
-      # GitVersion setup and execution
-      - name: Install GitVersion
-        run: dotnet tool install --global gitversion.tool
-
-      - name: Determine Version
-        id: gitversion
-        run: |
-          # Get JSON output and filter out INFO/WARN lines
-          VERSION_JSON=$(dotnet-gitversion /output json 2>&1 | grep -v "INFO\|WARN" | tr -d '\n')
-          echo "Version JSON: $VERSION_JSON"
-
-          # Parse using jq if available, fallback to grep
-          if command -v jq &> /dev/null; then
-            SEMVER=$(echo "$VERSION_JSON" | jq -r '.SemVer')
-            FULLSEMVER=$(echo "$VERSION_JSON" | jq -r '.FullSemVer')
-            NUGETVER=$(echo "$VERSION_JSON" | jq -r '.NuGetVersionV2')
-            MAJORMINORPATCH=$(echo "$VERSION_JSON" | jq -r '.MajorMinorPatch')
-          else
-            SEMVER=$(echo "$VERSION_JSON" | grep -oP '"SemVer"\s*:\s*"\K[^"]+')
-            FULLSEMVER=$(echo "$VERSION_JSON" | grep -oP '"FullSemVer"\s*:\s*"\K[^"]+')
-            NUGETVER=$(echo "$VERSION_JSON" | grep -oP '"NuGetVersionV2"\s*:\s*"\K[^"]+')
-            MAJORMINORPATCH=$(echo "$VERSION_JSON" | grep -oP '"MajorMinorPatch"\s*:\s*"\K[^"]+')
-          fi
-
-          echo "semVer=$SEMVER" >> $GITHUB_OUTPUT
-          echo "fullSemVer=$FULLSEMVER" >> $GITHUB_OUTPUT
-          echo "nugetVer=$NUGETVER" >> $GITHUB_OUTPUT
-          echo "majorMinorPatch=$MAJORMINORPATCH" >> $GITHUB_OUTPUT
-
-      - name: Display Version
-        run: |
-          echo "SemVer: ${{ steps.gitversion.outputs.semVer }}"
-          echo "FullSemVer: ${{ steps.gitversion.outputs.fullSemVer }}"
-          echo "NuGetVersionV2: ${{ steps.gitversion.outputs.nugetVer }}"
-          echo "MajorMinorPatch: ${{ steps.gitversion.outputs.majorMinorPatch }}"
-
       # Configure GitHub Packages NuGet source with credentials
       - name: Configure NuGet Credentials
         run: |
@@ -83,9 +47,19 @@ jobs:
       - name: Restore
         run: dotnet restore
 
-      # Build with version
+      # Build (GitVersion.MsBuild sets version automatically)
       - name: Build
-        run: dotnet build --no-restore --configuration Release /p:Version=${{ steps.gitversion.outputs.semVer }}
+        run: dotnet build --no-restore --configuration Release
+
+      # Extract version from GitVersion.MsBuild output
+      - name: Extract Version
+        id: version
+        run: |
+          SEMVER=$(jq -r '.SemVer' src/Awen/obj/gitversion.json)
+          MAJORMINORPATCH=$(jq -r '.MajorMinorPatch' src/Awen/obj/gitversion.json)
+          echo "semVer=$SEMVER" >> $GITHUB_OUTPUT
+          echo "majorMinorPatch=$MAJORMINORPATCH" >> $GITHUB_OUTPUT
+          echo "Version: $SEMVER (MajorMinorPatch: $MAJORMINORPATCH)"
 
       # Run unit tests
       - name: Unit Tests
@@ -108,8 +82,7 @@ jobs:
             --runtime linux-x64 \
             --self-contained \
             --output ./publish/linux-x64 \
-            /p:PublishSingleFile=true \
-            /p:Version=${{ steps.gitversion.outputs.semVer }}
+            /p:PublishSingleFile=true
 
       # Publish win-x64
       - name: Publish win-x64
@@ -119,21 +92,20 @@ jobs:
             --runtime win-x64 \
             --self-contained \
             --output ./publish/win-x64 \
-            /p:PublishSingleFile=true \
-            /p:Version=${{ steps.gitversion.outputs.semVer }}
+            /p:PublishSingleFile=true
 
       # Upload build artifacts with 7-day retention
       - name: Upload linux-x64 Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: awen-linux-x64-${{ steps.gitversion.outputs.semVer }}
+          name: awen-linux-x64-${{ steps.version.outputs.semVer }}
           path: publish/linux-x64/
           retention-days: 7
 
       - name: Upload win-x64 Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: awen-win-x64-${{ steps.gitversion.outputs.semVer }}
+          name: awen-win-x64-${{ steps.version.outputs.semVer }}
           path: publish/win-x64/
           retention-days: 7
 
@@ -150,8 +122,8 @@ jobs:
         if: github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ steps.gitversion.outputs.majorMinorPatch }}
-          name: v${{ steps.gitversion.outputs.majorMinorPatch }}
+          tag_name: v${{ steps.version.outputs.majorMinorPatch }}
+          name: v${{ steps.version.outputs.majorMinorPatch }}
           generate_release_notes: true
           files: |
             publish/linux-x64/Awen
