@@ -2,6 +2,7 @@ mode: ContinuousDelivery
 next-version: 1.0.0
 tag-prefix: v
 strategies:
+  - ConfiguredNextVersion
   - TaggedCommit
 
 assembly-versioning-scheme: MajorMinor
