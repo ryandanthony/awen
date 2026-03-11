@@ -4,8 +4,13 @@
     <PackageId>Awen.Sdk</PackageId>
     <Description>Lightweight SDK for authoring Awen component stories — Storybook for Avalonia.</Description>
     <PackageTags>avalonia;storybook;ui;components;preview</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)../../README.md" Pack="true" PackagePath="/" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Avalonia" />
