@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
+    <!-- Bundle native libs (e.g. libSkiaSharp) inside the single-file executable -->
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <!-- CA1501: Avalonia controls have deep inheritance hierarchies by design -->
     <!-- S2333: partial is required for Avalonia XAML code generation -->
     <NoWarn>$(NoWarn);CA1501;S2333</NoWarn>
