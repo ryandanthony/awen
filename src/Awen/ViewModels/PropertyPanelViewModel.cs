@@ -19,6 +19,7 @@ public sealed class PropertyPanelViewModel : INotifyPropertyChanged
     private Control? _propertiesContent;
     private bool _hasStorySelected;
     private string? _errorMessage;
+    private LogPanelViewModel? _logPanel;
 
     /// <summary>
     /// Gets the properties control created by the current story's <c>CreateProperties()</c>.
@@ -71,6 +72,19 @@ public sealed class PropertyPanelViewModel : INotifyPropertyChanged
     /// </summary>
     public bool HasError => _errorMessage is not null;
 
+    /// <summary>
+    /// Gets or sets the log panel for reporting errors.
+    /// </summary>
+    public LogPanelViewModel? LogPanel
+    {
+        get => _logPanel;
+        set
+        {
+            _logPanel = value;
+            OnPropertyChanged();
+        }
+    }
+
     /// <inheritdoc/>
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -103,6 +117,7 @@ public sealed class PropertyPanelViewModel : INotifyPropertyChanged
         {
             PropertiesContent = null;
             ErrorMessage = $"CreateProperties() failed for '{story.Name}': {ex.Message}";
+            LogPanel?.AddLog(LogLevel.Error, "Properties", $"CreateProperties() failed for '{story.Name}':\n{ex}");
         }
     }
 

@@ -32,17 +32,46 @@ public sealed class PreviewViewModel : INotifyPropertyChanged
         ["Widescreen"] = (2560, 1440),
     };
 
+    private IReadOnlyList<StoryAssemblyInfo> _storyAssemblies = [];
+    private LogPanelViewModel? _logPanel;
     private StoryDescriptor? _selectedStory;
     private Control? _previewContent;
     private string? _description;
     private string? _errorMessage;
     private bool _isDarkTheme;
+    private ResourceDictionary? _libraryTheme;
     private double _viewportWidth = double.PositiveInfinity;
     private double _viewportHeight = double.PositiveInfinity;
     private double _actualViewportWidth;
     private double _actualViewportHeight;
     private string _selectedPreset = "Responsive";
     private bool _suppressPresetChange;
+
+    /// <summary>
+    /// Gets or sets the log panel for reporting errors.
+    /// </summary>
+    public LogPanelViewModel? LogPanel
+    {
+        get => _logPanel;
+        set
+        {
+            _logPanel = value;
+            OnPropertyChanged();
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets the loaded story assemblies for library theme resolution.
+    /// </summary>
+    public IReadOnlyList<StoryAssemblyInfo> StoryAssemblies
+    {
+        get => _storyAssemblies;
+        set
+        {
+            _storyAssemblies = value ?? [];
+            OnPropertyChanged();
+        }
+    }
 
     /// <summary>
     /// Gets or sets a value indicating whether the dark theme is active.
@@ -58,9 +87,10 @@ public sealed class PreviewViewModel : INotifyPropertyChanged
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(ThemeVariant));
 
-                // Re-render story under new theme
+                // Reload library theme for new variant and re-render story
                 if (_selectedStory is not null)
                 {
+                    LoadLibraryTheme(_selectedStory);
                     RenderStory(_selectedStory);
                 }
             }
@@ -134,6 +164,20 @@ public sealed class PreviewViewModel : INotifyPropertyChanged
     /// Gets a value indicating whether there is an error to display.
     /// </summary>
     public bool HasError => _errorMessage is not null;
+
+    /// <summary>
+    /// Gets the library theme <see cref="ResourceDictionary"/> to merge into the preview scope.
+    /// Loaded from the story assembly's embedded resources via <see cref="ThemeLoader"/>.
+    /// </summary>
+    public ResourceDictionary? LibraryTheme
+    {
+        get => _libraryTheme;
+        private set
+        {
+            _libraryTheme = value;
+            OnPropertyChanged();
+        }
+    }
 
     /// <summary>
     /// Gets or sets the viewport width constraint. <see cref="double.PositiveInfinity"/> means unconstrained.
@@ -255,10 +299,12 @@ public sealed class PreviewViewModel : INotifyPropertyChanged
         {
             PreviewContent = null;
             Description = null;
+            LibraryTheme = null;
             return;
         }
 
         Description = descriptor.Description;
+        LoadLibraryTheme(descriptor);
 
         try
         {
@@ -272,6 +318,35 @@ public sealed class PreviewViewModel : INotifyPropertyChanged
         {
             PreviewContent = null;
             ErrorMessage = $"CreateControl() failed for '{descriptor.Name}': {ex.Message}";
+            LogPanel?.AddLog(LogLevel.Error, "Preview", $"CreateControl() failed for '{descriptor.Name}':\n{ex}");
+        }
+    }
+
+    private void LoadLibraryTheme(StoryDescriptor descriptor)
+    {
+        var assemblyInfo = _storyAssemblies.FirstOrDefault(
+            a => a.LibraryName.Equals(descriptor.LibraryName, StringComparison.Ordinal));
+
+        if (assemblyInfo is null)
+        {
+            LibraryTheme = null;
+            return;
+        }
+
+        var resourcePath = _isDarkTheme
+            ? assemblyInfo.DarkThemeResourcePath
+            : assemblyInfo.LightThemeResourcePath;
+
+        try
+        {
+            LibraryTheme = ThemeLoader.LoadFromAssembly(assemblyInfo.Assembly, resourcePath);
+        }
+#pragma warning disable CA1031 // Catch all for resilient theme loading
+        catch (Exception ex)
+#pragma warning restore CA1031
+        {
+            LibraryTheme = null;
+            LogPanel?.AddLog(LogLevel.Error, "Theme", $"LoadLibraryTheme() failed for '{descriptor.LibraryName}':\n{ex}");
         }
     }
 

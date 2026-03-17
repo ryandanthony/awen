@@ -7,7 +7,7 @@
     <UserControl.Resources>
         <conv:InfinityToNaNConverter x:Key="InfinityToNaN" />
     </UserControl.Resources>
-    <ThemeVariantScope RequestedThemeVariant="{Binding ThemeVariant}">
+    <ThemeVariantScope x:Name="PART_ThemeScope" RequestedThemeVariant="{Binding ThemeVariant}">
         <Panel Background="{DynamicResource LightSurface}">
             <!-- Empty state: no story selected -->
             <StackPanel VerticalAlignment="Center"
@@ -30,28 +30,33 @@
             </StackPanel>
 
             <!-- Error overlay -->
-            <StackPanel VerticalAlignment="Center"
-                        HorizontalAlignment="Center"
-                        IsVisible="{Binding HasError}"
-                        Spacing="12"
-                        MaxWidth="500">
-                <TextBlock Text="⚠️ Error"
-                           FontWeight="Bold"
-                           Foreground="{DynamicResource ColorError}"
-                           FontSize="14"
-                           HorizontalAlignment="Center" />
-                <Border Background="{DynamicResource LightBackground}"
-                        BorderBrush="{DynamicResource ColorError}"
-                        BorderThickness="1"
-                        CornerRadius="4"
-                        Padding="12">
-                    <TextBlock Text="{Binding ErrorMessage}"
-                               TextWrapping="Wrap"
-                               Foreground="{DynamicResource LightText}"
-                               FontSize="12"
-                               LineHeight="1.5" />
-                </Border>
-            </StackPanel>
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                         HorizontalScrollBarVisibility="Disabled"
+                         IsVisible="{Binding HasError}"
+                         Padding="24">
+                <StackPanel VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Spacing="12"
+                            MaxWidth="600">
+                    <TextBlock Text="⚠️ Error"
+                               FontWeight="Bold"
+                               Foreground="{DynamicResource ColorError}"
+                               FontSize="14"
+                               HorizontalAlignment="Center" />
+                    <Border Background="{DynamicResource LightBackground}"
+                            BorderBrush="{DynamicResource ColorError}"
+                            BorderThickness="1"
+                            CornerRadius="4"
+                            Padding="16">
+                        <SelectableTextBlock Text="{Binding ErrorMessage}"
+                                             TextWrapping="Wrap"
+                                             Foreground="{DynamicResource LightText}"
+                                             FontFamily="Cascadia Mono, Consolas, monospace"
+                                             FontSize="12"
+                                             LineHeight="18" />
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
 
             <!-- Normal preview content with viewport constraints -->
             <Border x:Name="PART_PreviewBorder"
@@ -77,11 +82,14 @@
                                    LineHeight="1.4" />
                     </Border>
 
-                    <!-- Preview control fills available space -->
-                    <ContentControl Content="{Binding PreviewContent}"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Stretch"
-                                    Margin="12" />
+                    <!-- Preview control fills available space, scrollable when content overflows -->
+                    <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                                  VerticalScrollBarVisibility="Auto">
+                        <ContentControl Content="{Binding PreviewContent}"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        Margin="12" />
+                    </ScrollViewer>
                 </DockPanel>
             </Border>
         </Panel>

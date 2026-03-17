@@ -41,9 +41,14 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged, IDisposable
         Sidebar = new SidebarViewModel(Registry, options.Filter);
         Preview = new PreviewViewModel
         {
+            StoryAssemblies = assemblies,
             IsDarkTheme = options.Theme?.Equals("dark", StringComparison.OrdinalIgnoreCase) == true,
+            LogPanel = LogPanel,
         };
-        PropertyPanel = new PropertyPanelViewModel();
+        PropertyPanel = new PropertyPanelViewModel
+        {
+            LogPanel = LogPanel,
+        };
 
         // Wire sidebar selection → preview + property panel
         Sidebar.PropertyChanged += OnSidebarPropertyChanged;
