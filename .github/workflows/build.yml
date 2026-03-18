@@ -94,21 +94,6 @@ jobs:
             --output ./publish/win-x64 \
             /p:PublishSingleFile=true
 
-      # Upload build artifacts with 7-day retention
-      - name: Upload linux-x64 Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: awen-linux-x64-${{ steps.version.outputs.semVer }}
-          path: publish/linux-x64/
-          retention-days: 7
-
-      - name: Upload win-x64 Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: awen-win-x64-${{ steps.version.outputs.semVer }}
-          path: publish/win-x64/
-          retention-days: 7
-
       # Pack Awen.Sdk NuGet package
       - name: Pack Awen.Sdk
         if: github.ref == 'refs/heads/main'
