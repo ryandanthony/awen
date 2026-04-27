@@ -1,0 +1,97 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Awen.ViewModels"
+        x:Class="Awen.Views.ViewportEditorWindow"
+        x:DataType="vm:ViewportEditorViewModel"
+        Title="Edit Viewports"
+        Width="640"
+        Height="520"
+        MinWidth="560"
+        MinHeight="420"
+        Background="{DynamicResource LightBackground}">
+    <Grid RowDefinitions="Auto,*,Auto" Margin="16" RowSpacing="12">
+        <TextBlock Text="Enable or disable devices. Add new device presets below."
+                   FontSize="13"
+                   Foreground="{DynamicResource LightTextSecondary}" />
+
+        <Border Grid.Row="1"
+                BorderBrush="{DynamicResource LightBorder}"
+                BorderThickness="1"
+                CornerRadius="6"
+                Padding="10">
+            <Grid RowDefinitions="Auto,*,Auto,Auto" RowSpacing="10">
+                <Grid ColumnDefinitions="90,*,90,90" ColumnSpacing="8">
+                    <TextBlock Text="Enabled"
+                               FontWeight="SemiBold"
+                               VerticalAlignment="Center" />
+                    <TextBlock Grid.Column="1"
+                               Text="Name"
+                               FontWeight="SemiBold"
+                               VerticalAlignment="Center" />
+                    <TextBlock Grid.Column="2"
+                               Text="Width"
+                               FontWeight="SemiBold"
+                               VerticalAlignment="Center" />
+                    <TextBlock Grid.Column="3"
+                               Text="Height"
+                               FontWeight="SemiBold"
+                               VerticalAlignment="Center" />
+                </Grid>
+
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{Binding Devices}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="vm:ViewportEditableDevice">
+                                <Grid ColumnDefinitions="90,*,90,90" ColumnSpacing="8" Margin="0,2">
+                                    <CheckBox IsChecked="{Binding Enabled, Mode=TwoWay}"
+                                              VerticalAlignment="Center"
+                                              HorizontalAlignment="Center" />
+                                    <TextBlock Grid.Column="1"
+                                               Text="{Binding Name}"
+                                               VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="2"
+                                               Text="{Binding Width, StringFormat={}{0:F0}}"
+                                               VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="3"
+                                               Text="{Binding Height, StringFormat={}{0:F0}}"
+                                               VerticalAlignment="Center" />
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+
+                <TextBlock Grid.Row="2"
+                           Text="Add Device"
+                           FontWeight="SemiBold"
+                           Margin="0,4,0,0" />
+
+                <Grid Grid.Row="3" ColumnDefinitions="*,120,120,Auto" ColumnSpacing="8">
+                    <TextBox Watermark="Name"
+                             Text="{Binding NewDeviceName, Mode=TwoWay}" />
+                    <TextBox Grid.Column="1"
+                             Watermark="Width"
+                             Text="{Binding NewDeviceWidth, Mode=TwoWay}" />
+                    <TextBox Grid.Column="2"
+                             Watermark="Height"
+                             Text="{Binding NewDeviceHeight, Mode=TwoWay}" />
+                    <Button Grid.Column="3"
+                            Content="Add"
+                            Click="OnAddDeviceClick" />
+                </Grid>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="2" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+            <TextBlock Text="{Binding AddError}"
+                       Foreground="IndianRed"
+                       VerticalAlignment="Center" />
+            <Button Grid.Column="1"
+                    Content="Cancel"
+                    Click="OnCancelClick" />
+            <Button Grid.Column="2"
+                    Content="Save"
+                    Click="OnSaveClick" />
+        </Grid>
+    </Grid>
+</Window>

@@ -48,11 +48,33 @@
                            Foreground="{DynamicResource LightTextSecondary}"
                            FontSize="12"
                            FontWeight="500" />
-                <ComboBox ItemsSource="{x:Static vm:PreviewViewModel.ViewportPresets}"
+                <ComboBox ItemsSource="{Binding Preview.ViewportPresets}"
                           SelectedItem="{Binding Preview.SelectedPreset}"
-                          Width="110"
+                          Width="170"
                           VerticalAlignment="Center"
                           FontSize="12" />
+                <Button Content="Edit"
+                    VerticalAlignment="Center"
+                    FontSize="12"
+                    Padding="10,4"
+                    Click="OnEditViewportClick" />
+
+                <!-- Orientation toggle: Portrait / Landscape -->
+                <StackPanel Orientation="Horizontal"
+                            Spacing="4"
+                            VerticalAlignment="Center"
+                            IsVisible="{Binding Preview.CanToggleOrientation}">
+                    <Button Content="⬜ Portrait"
+                            FontSize="12"
+                            Padding="8,4"
+                            IsEnabled="{Binding Preview.IsLandscape}"
+                            Click="OnPortraitClick" />
+                    <Button Content="⬛ Landscape"
+                            FontSize="12"
+                            Padding="8,4"
+                            IsEnabled="{Binding !Preview.IsLandscape}"
+                            Click="OnLandscapeClick" />
+                </StackPanel>
                 
                 <!-- Viewport dimensions display -->
                 <StackPanel Orientation="Horizontal"
@@ -100,7 +122,7 @@
                     Background="{DynamicResource LightBackground}"
                     BorderBrush="{DynamicResource LightBorder}"
                     BorderThickness="0,0,1,0"
-                    Padding="12">
+                    Padding="8">
                 <views:SidebarView DataContext="{Binding Sidebar}" />
             </Border>
 
@@ -111,7 +133,7 @@
 
             <!-- Center preview canvas -->
             <Border Grid.Column="2"
-                    Background="{DynamicResource LightSurface}"
+                    Background="{DynamicResource CanvasOuterBackground}"
                     Padding="24">
                 <views:PreviewCanvas DataContext="{Binding Preview}" />
             </Border>

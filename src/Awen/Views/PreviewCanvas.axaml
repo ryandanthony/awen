@@ -8,7 +8,7 @@
         <conv:InfinityToNaNConverter x:Key="InfinityToNaN" />
     </UserControl.Resources>
     <ThemeVariantScope x:Name="PART_ThemeScope" RequestedThemeVariant="{Binding ThemeVariant}">
-        <Panel Background="{DynamicResource LightSurface}">
+        <Panel Background="{DynamicResource CanvasOuterBackground}">
             <!-- Empty state: no story selected -->
             <StackPanel VerticalAlignment="Center"
                         HorizontalAlignment="Center"
@@ -65,8 +65,9 @@
                     Height="{Binding ViewportHeight, Converter={StaticResource InfinityToNaN}}"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
-                    Background="{DynamicResource LightBackground}"
-                    CornerRadius="4">
+                    Background="#FFFFFF"
+                    CornerRadius="4"
+                    BoxShadow="0 4 32 8 #50000000">
                 <DockPanel>
                     <!-- Description at bottom -->
                     <Border DockPanel.Dock="Bottom"

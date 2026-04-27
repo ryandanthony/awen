@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Avalonia.Controls;
 using Avalonia.Styling;
+using Awen.Configuration;
 using Awen.Discovery;
 
 namespace Awen.ViewModels;
@@ -17,19 +18,12 @@ namespace Awen.ViewModels;
 /// </summary>
 public sealed class PreviewViewModel : INotifyPropertyChanged
 {
-    /// <summary>
-    /// Available viewport preset names.
-    /// </summary>
-    public static readonly IReadOnlyList<string> ViewportPresets = ["Responsive", "Phone", "Tablet", "Laptop", "Desktop", "Widescreen"];
+    private const string ResponsivePresetName = "Responsive";
 
-    private static readonly Dictionary<string, (double width, double height)> PresetDimensions = new(StringComparer.Ordinal)
+    private readonly ViewportConfigStore _viewportConfigStore;
+    private Dictionary<string, (double width, double height)> _presetDimensions = new(StringComparer.Ordinal)
     {
-        ["Responsive"] = (double.PositiveInfinity, double.PositiveInfinity),
-        ["Phone"] = (375, 812),
-        ["Tablet"] = (768, 1024),
-        ["Laptop"] = (1366, 768),
-        ["Desktop"] = (1920, 1080),
-        ["Widescreen"] = (2560, 1440),
+        [ResponsivePresetName] = (double.PositiveInfinity, double.PositiveInfinity),
     };
 
     private IReadOnlyList<StoryAssemblyInfo> _storyAssemblies = [];
@@ -39,13 +33,42 @@ public sealed class PreviewViewModel : INotifyPropertyChanged
     private string? _description;
     private string? _errorMessage;
     private bool _isDarkTheme;
+    private bool _isLandscape;
     private ResourceDictionary? _libraryTheme;
     private double _viewportWidth = double.PositiveInfinity;
     private double _viewportHeight = double.PositiveInfinity;
     private double _actualViewportWidth;
     private double _actualViewportHeight;
-    private string _selectedPreset = "Responsive";
+    private IReadOnlyList<string> _viewportPresets = [ResponsivePresetName];
+    private string _selectedPreset = ResponsivePresetName;
     private bool _suppressPresetChange;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PreviewViewModel"/> class.
+    /// </summary>
+    public PreviewViewModel(ViewportConfigStore? viewportConfigStore = null)
+    {
+        _viewportConfigStore = viewportConfigStore ?? new ViewportConfigStore();
+        ReloadViewportConfiguration();
+    }
+
+    /// <summary>
+    /// Gets the default user viewport config path.
+    /// </summary>
+    public string ViewportConfigPath => _viewportConfigStore.UserConfigPath;
+
+    /// <summary>
+    /// Gets the available viewport preset names.
+    /// </summary>
+    public IReadOnlyList<string> ViewportPresets
+    {
+        get => _viewportPresets;
+        private set
+        {
+            _viewportPresets = value;
+            OnPropertyChanged();
+        }
+    }
 
     /// <summary>
     /// Gets or sets the log panel for reporting errors.
@@ -272,6 +295,37 @@ public sealed class PreviewViewModel : INotifyPropertyChanged
         double.IsPositiveInfinity(_viewportHeight) ? _actualViewportHeight : _viewportHeight;
 
     /// <summary>
+    /// Gets or sets a value indicating whether the viewport is in landscape orientation.
+    /// Only relevant when a fixed-size preset is active.
+    /// </summary>
+    public bool IsLandscape
+    {
+        get => _isLandscape;
+        set
+        {
+            if (_isLandscape != value)
+            {
+                _isLandscape = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(OrientationLabel));
+                ApplyPresetDimensions(_selectedPreset);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Gets a label describing the current orientation, used for display.
+    /// </summary>
+    public string OrientationLabel => _isLandscape ? "Landscape" : "Portrait";
+
+    /// <summary>
+    /// Gets a value indicating whether orientation toggle is applicable (non-Responsive preset).
+    /// </summary>
+    public bool CanToggleOrientation =>
+        !string.Equals(_selectedPreset, ResponsivePresetName, StringComparison.Ordinal)
+        && !string.Equals(_selectedPreset, "Custom", StringComparison.Ordinal);
+
+    /// <summary>
     /// Gets or sets the selected viewport preset name.
     /// </summary>
     public string SelectedPreset
@@ -283,6 +337,7 @@ public sealed class PreviewViewModel : INotifyPropertyChanged
             {
                 _selectedPreset = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(CanToggleOrientation));
                 ApplyPresetDimensions(value);
             }
         }
@@ -290,6 +345,79 @@ public sealed class PreviewViewModel : INotifyPropertyChanged
 
     /// <inheritdoc/>
     public event PropertyChangedEventHandler? PropertyChanged;
+
+    /// <summary>
+    /// Ensures user viewport config exists, then returns editable devices.
+    /// </summary>
+    /// <returns>Editable device list.</returns>
+    public IReadOnlyList<ViewportDevice> LoadViewportDevicesForEdit()
+    {
+        _viewportConfigStore.EnsureUserConfigExists();
+        var config = _viewportConfigStore.Load();
+        return config.Devices
+            .Select(device => device with { })
+            .ToList();
+    }
+
+    /// <summary>
+    /// Saves edited viewport devices and reloads presets.
+    /// </summary>
+    /// <param name="devices">Edited devices.</param>
+    public void SaveViewportDevices(IEnumerable<ViewportDevice> devices)
+    {
+        ArgumentNullException.ThrowIfNull(devices);
+
+        var sanitized = devices
+            .Where(device =>
+                !string.IsNullOrWhiteSpace(device.Name)
+                && device.Width > 0
+                && device.Height > 0)
+            .DistinctBy(device => device.Name, StringComparer.Ordinal)
+            .ToList();
+
+        var config = new ViewportConfig
+        {
+            Devices = sanitized,
+        };
+
+        _viewportConfigStore.Write(config);
+        ReloadViewportConfiguration();
+    }
+
+    /// <summary>
+    /// Reloads viewport presets from user config file or embedded defaults.
+    /// </summary>
+    public void ReloadViewportConfiguration()
+    {
+        var config = _viewportConfigStore.Load();
+
+        var presets = new List<string> { ResponsivePresetName };
+        var dimensions = new Dictionary<string, (double width, double height)>(StringComparer.Ordinal)
+        {
+            [ResponsivePresetName] = (double.PositiveInfinity, double.PositiveInfinity),
+        };
+
+        foreach (var device in config.Devices.Where(device => device.Enabled))
+        {
+            if (string.IsNullOrWhiteSpace(device.Name) || device.Width <= 0 || device.Height <= 0)
+            {
+                continue;
+            }
+
+            if (dimensions.ContainsKey(device.Name))
+            {
+                continue;
+            }
+
+            dimensions[device.Name] = (device.Width, device.Height);
+            presets.Add(device.Name);
+        }
+
+        _presetDimensions = dimensions;
+        ViewportPresets = presets;
+
+        UpdatePresetFromDimensions();
+    }
 
     private void RenderStory(StoryDescriptor? descriptor)
     {
@@ -357,18 +485,31 @@ public sealed class PreviewViewModel : INotifyPropertyChanged
 
     private void ApplyPresetDimensions(string preset)
     {
-        if (PresetDimensions.TryGetValue(preset, out var dimensions))
+        if (_presetDimensions.TryGetValue(preset, out var dimensions))
         {
             _suppressPresetChange = true;
-            ViewportWidth = dimensions.width;
-            ViewportHeight = dimensions.height;
+            if (_isLandscape && !double.IsPositiveInfinity(dimensions.width))
+            {
+                ViewportWidth = Math.Max(dimensions.width, dimensions.height);
+                ViewportHeight = Math.Min(dimensions.width, dimensions.height);
+            }
+            else
+            {
+                ViewportWidth = double.IsPositiveInfinity(dimensions.width)
+                    ? dimensions.width
+                    : Math.Min(dimensions.width, dimensions.height);
+                ViewportHeight = double.IsPositiveInfinity(dimensions.height)
+                    ? dimensions.height
+                    : Math.Max(dimensions.width, dimensions.height);
+            }
+
             _suppressPresetChange = false;
         }
     }
 
     private void UpdatePresetFromDimensions()
     {
-        foreach (var (name, dimensions) in PresetDimensions)
+        foreach (var (name, dimensions) in _presetDimensions)
         {
             if (_viewportWidth.Equals(dimensions.width) && _viewportHeight.Equals(dimensions.height))
             {
@@ -386,6 +527,7 @@ public sealed class PreviewViewModel : INotifyPropertyChanged
         {
             _selectedPreset = "Custom";
             OnPropertyChanged(nameof(SelectedPreset));
+            OnPropertyChanged(nameof(CanToggleOrientation));
         }
     }
 }
