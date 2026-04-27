@@ -1,14 +1,17 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <!-- Awen UI Theme - Light variant (for sidebar, toolbar, panels) -->
-    <SolidColorBrush x:Key="LightBackground" Color="#FAFAFA" />
-    <SolidColorBrush x:Key="LightSurface" Color="#FFFFFF" />
-    <SolidColorBrush x:Key="LightBorder" Color="#E0E0E0" />
-    <SolidColorBrush x:Key="LightText" Color="#1B1B1F" />
-    <SolidColorBrush x:Key="LightTextSecondary" Color="#49454F" />
-    <SolidColorBrush x:Key="LightTextTertiary" Color="#79747E" />
-    <SolidColorBrush x:Key="LightSurfaceVariant" Color="#F5F5F5" />
-    
+    <!-- Awen UI Theme - Mid-tone slate (between dark and light) -->
+    <SolidColorBrush x:Key="LightBackground" Color="#2D3142" />
+    <SolidColorBrush x:Key="LightSurface" Color="#363B52" />
+    <SolidColorBrush x:Key="LightBorder" Color="#4A5070" />
+    <SolidColorBrush x:Key="LightText" Color="#E2E5F0" />
+    <SolidColorBrush x:Key="LightTextSecondary" Color="#9EA3C0" />
+    <SolidColorBrush x:Key="LightTextTertiary" Color="#6B7090" />
+    <SolidColorBrush x:Key="LightSurfaceVariant" Color="#3A4060" />
+
+    <!-- Preview canvas outer area - darker so the viewport pops with contrast -->
+    <SolidColorBrush x:Key="CanvasOuterBackground" Color="#1B1E2C" />
+
     <!-- Preview Canvas Theme - Light variant (for previewed components in light theme) -->
     <SolidColorBrush x:Key="AwenPreviewBackground" Color="#FFFFFF" />
     <SolidColorBrush x:Key="AwenPreviewForeground" Color="#1B1B1F" />
@@ -18,10 +21,10 @@
     <SolidColorBrush x:Key="AwenBorder" Color="#E0E0E0" />
     <SolidColorBrush x:Key="AwenSurfaceVariant" Color="#F5F5F5" />
     <SolidColorBrush x:Key="AwenOnSurfaceVariant" Color="#49454F" />
-    
-    <!-- Status colors -->
-    <SolidColorBrush x:Key="ColorSuccess" Color="#2E7D32" />
-    <SolidColorBrush x:Key="ColorWarning" Color="#F57C00" />
-    <SolidColorBrush x:Key="ColorError" Color="#C62828" />
-    <SolidColorBrush x:Key="ColorInfo" Color="#1565C0" />
+
+    <!-- Status colors - adjusted for dark backgrounds -->
+    <SolidColorBrush x:Key="ColorSuccess" Color="#52C97A" />
+    <SolidColorBrush x:Key="ColorWarning" Color="#FFAA3E" />
+    <SolidColorBrush x:Key="ColorError" Color="#FF6B6B" />
+    <SolidColorBrush x:Key="ColorInfo" Color="#5AADFF" />
 </ResourceDictionary>

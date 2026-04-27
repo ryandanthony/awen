@@ -24,14 +24,25 @@ public sealed class PreviewViewModelViewportTests
     }
 
     [Fact]
-    public void SelectPhonePreset_AppliesDimensions()
+    public void SelectIPhone14ProMaxPreset_AppliesDimensions()
     {
         var vm = new PreviewViewModel();
 
-        vm.SelectedPreset = "Phone";
+        vm.SelectedPreset = "iPhone 14 Pro Max";
 
-        Assert.Equal(375, vm.ViewportWidth);
-        Assert.Equal(812, vm.ViewportHeight);
+        Assert.Equal(430, vm.ViewportWidth);
+        Assert.Equal(932, vm.ViewportHeight);
+    }
+
+    [Fact]
+    public void SelectPixel8ProPreset_AppliesDimensions()
+    {
+        var vm = new PreviewViewModel();
+
+        vm.SelectedPreset = "Pixel 8 Pro";
+
+        Assert.Equal(412, vm.ViewportWidth);
+        Assert.Equal(915, vm.ViewportHeight);
     }
 
     [Fact]
@@ -83,7 +94,7 @@ public sealed class PreviewViewModelViewportTests
     {
         var vm = new PreviewViewModel
         {
-            SelectedPreset = "Phone",
+            SelectedPreset = "iPhone 14 Pro Max",
         };
 
         vm.SelectedPreset = "Responsive";
@@ -118,7 +129,7 @@ public sealed class PreviewViewModelViewportTests
             }
         };
 
-        vm.SelectedPreset = "Phone";
+        vm.SelectedPreset = "iPhone 14 Pro Max";
 
         Assert.Contains(nameof(PreviewViewModel.SelectedPreset), changed);
         Assert.Contains(nameof(PreviewViewModel.ViewportWidth), changed);
@@ -146,10 +157,12 @@ public sealed class PreviewViewModelViewportTests
     [Fact]
     public void Presets_ContainsExpectedValues()
     {
-        var presets = PreviewViewModel.ViewportPresets;
+        var vm = new PreviewViewModel();
+        var presets = vm.ViewportPresets;
 
         Assert.Contains("Responsive", presets);
-        Assert.Contains("Phone", presets);
+        Assert.Contains("iPhone 14 Pro Max", presets);
+        Assert.Contains("Pixel 8 Pro", presets);
         Assert.Contains("Tablet", presets);
         Assert.Contains("Laptop", presets);
         Assert.Contains("Desktop", presets);
@@ -202,10 +215,10 @@ public sealed class PreviewViewModelViewportTests
     {
         var vm = new PreviewViewModel
         {
-            SelectedPreset = "Phone",
+            SelectedPreset = "iPhone 14 Pro Max",
         };
 
-        Assert.Equal(375, vm.DisplayViewportWidth);
+        Assert.Equal(430, vm.DisplayViewportWidth);
     }
 
     [Fact]
@@ -213,10 +226,10 @@ public sealed class PreviewViewModelViewportTests
     {
         var vm = new PreviewViewModel
         {
-            SelectedPreset = "Phone",
+            SelectedPreset = "iPhone 14 Pro Max",
         };
 
-        Assert.Equal(812, vm.DisplayViewportHeight);
+        Assert.Equal(932, vm.DisplayViewportHeight);
     }
 
     [Fact]

@@ -1,0 +1,106 @@
+{
+  "devices": [
+    {
+      "name": "iPhone 14 Pro Max",
+      "width": 430,
+      "height": 932,
+      "enabled": true
+    },
+    {
+      "name": "iPhone 15 Pro",
+      "width": 393,
+      "height": 852,
+      "enabled": true
+    },
+    {
+      "name": "iPhone 15",
+      "width": 393,
+      "height": 852,
+      "enabled": true
+    },
+    {
+      "name": "Pixel 8 Pro",
+      "width": 412,
+      "height": 915,
+      "enabled": true
+    },
+    {
+      "name": "Galaxy S24",
+      "width": 360,
+      "height": 780,
+      "enabled": true
+    },
+    {
+      "name": "iPad Pro 12.9",
+      "width": 1024,
+      "height": 1366,
+      "enabled": true
+    },
+    {
+      "name": "iPad Air",
+      "width": 820,
+      "height": 1180,
+      "enabled": true
+    },
+    {
+      "name": "iPad Mini",
+      "width": 744,
+      "height": 1133,
+      "enabled": true
+    },
+    {
+      "name": "Galaxy Tab S9",
+      "width": 800,
+      "height": 1280,
+      "enabled": true
+    },
+    {
+      "name": "Laptop 1440x900",
+      "width": 1440,
+      "height": 900,
+      "enabled": true
+    },
+    {
+      "name": "Laptop 1536x864",
+      "width": 1536,
+      "height": 864,
+      "enabled": true
+    },
+    {
+      "name": "HD 1366x768",
+      "width": 1366,
+      "height": 768,
+      "enabled": true
+    },
+    {
+      "name": "FHD 1920x1080",
+      "width": 1920,
+      "height": 1080,
+      "enabled": true
+    },
+    {
+      "name": "Desktop 2560x1440",
+      "width": 2560,
+      "height": 1440,
+      "enabled": true
+    },
+    {
+      "name": "4K UHD 3840x2160",
+      "width": 3840,
+      "height": 2160,
+      "enabled": true
+    },
+    {
+      "name": "Widescreen 38 inch",
+      "width": 3840,
+      "height": 1600,
+      "enabled": true
+    },
+    {
+      "name": "Widescreen 49 inch",
+      "width": 5120,
+      "height": 1440,
+      "enabled": true
+    }
+  ]
+}

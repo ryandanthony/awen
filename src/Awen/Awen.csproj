@@ -17,11 +17,16 @@
     <PackageReference Include="Avalonia.Desktop" />
     <PackageReference Include="Avalonia.Themes.Fluent" />
     <PackageReference Include="Avalonia.Markup.Xaml.Loader" />
+    <PackageReference Include="Tmds.DBus.Protocol" />
     <PackageReference Include="System.CommandLine" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Awen.Sdk\Awen.Sdk.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration/viewport-defaults.json" />
   </ItemGroup>
 
 </Project>
