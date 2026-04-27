@@ -1,0 +1,22 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:ExampleUI.Stories.Feedback.AlertBanner.LongText"
+             x:Class="ExampleUI.Stories.Feedback.AlertBanner.LongText.Properties"
+             x:DataType="local:Story">
+    <StackPanel Spacing="12" Margin="8">
+        <TextBlock Text="This story intentionally starts with a long message to validate wrapping in narrow preview sizes."
+                   TextWrapping="Wrap" />
+        <StackPanel Spacing="4">
+            <TextBlock Text="Message" FontWeight="SemiBold" />
+            <TextBox Text="{Binding Message}" AcceptsReturn="True" />
+        </StackPanel>
+        <StackPanel Spacing="4">
+            <TextBlock Text="Severity" FontWeight="SemiBold" />
+            <ComboBox x:Name="SeverityComboBox" SelectedItem="{Binding Severity}" />
+        </StackPanel>
+        <StackPanel Spacing="4">
+            <TextBlock Text="Dismissable" FontWeight="SemiBold" />
+            <ToggleSwitch IsChecked="{Binding IsDismissable}" />
+        </StackPanel>
+    </StackPanel>
+</UserControl>

@@ -1,0 +1,12 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="using:ExampleUI.Controls"
+             xmlns:local="using:ExampleUI.Stories.Feedback.AlertBanner.LongText"
+             x:Class="ExampleUI.Stories.Feedback.AlertBanner.LongText.Control"
+             x:DataType="local:Story">
+    <controls:AlertBanner Message="{Binding Message}"
+                          Severity="{Binding Severity}"
+                          IsDismissable="{Binding IsDismissable}"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Center" />
+</UserControl>

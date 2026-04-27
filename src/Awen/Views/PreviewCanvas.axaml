@@ -84,7 +84,7 @@
                     </Border>
 
                     <!-- Preview control fills available space, scrollable when content overflows -->
-                    <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                    <ScrollViewer HorizontalScrollBarVisibility="Disabled"
                                   VerticalScrollBarVisibility="Auto">
                         <ContentControl Content="{Binding PreviewContent}"
                                         HorizontalAlignment="Stretch"

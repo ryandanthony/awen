@@ -22,18 +22,19 @@
                     Cursor="Hand"
                     FontSize="16"
                     IsVisible="{Binding IsDismissable, RelativeSource={RelativeSource AncestorType=local:AlertBanner}}" />
-            <StackPanel Orientation="Horizontal"
-                        HorizontalAlignment="Stretch">
+            <Grid ColumnDefinitions="Auto,*"
+                  HorizontalAlignment="Stretch">
                 <TextBlock x:Name="PART_Icon"
                            FontSize="16"
                            VerticalAlignment="Center"
                            Margin="0,0,8,0" />
                 <TextBlock x:Name="PART_Message"
+                           Grid.Column="1"
                            Text="{Binding Message, RelativeSource={RelativeSource AncestorType=local:AlertBanner}}"
                            VerticalAlignment="Center"
                            TextWrapping="Wrap"
                            HorizontalAlignment="Stretch" />
-            </StackPanel>
+            </Grid>
         </DockPanel>
     </Border>
 </UserControl>
