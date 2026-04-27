@@ -50,18 +50,21 @@ public sealed class PreviewViewModelViewportTests
     {
         var vm = new PreviewViewModel();
 
-        vm.SelectedPreset = "Tablet";
+        vm.SelectedPreset = "iPad Mini";
 
-        Assert.Equal(768, vm.ViewportWidth);
-        Assert.Equal(1024, vm.ViewportHeight);
+        Assert.Equal(744, vm.ViewportWidth);
+        Assert.Equal(1133, vm.ViewportHeight);
     }
 
     [Fact]
     public void SelectLaptopPreset_AppliesDimensions()
     {
-        var vm = new PreviewViewModel();
+        var vm = new PreviewViewModel
+        {
+            IsLandscape = true,
+        };
 
-        vm.SelectedPreset = "Laptop";
+        vm.SelectedPreset = "HD 1366x768";
 
         Assert.Equal(1366, vm.ViewportWidth);
         Assert.Equal(768, vm.ViewportHeight);
@@ -70,9 +73,12 @@ public sealed class PreviewViewModelViewportTests
     [Fact]
     public void SelectDesktopPreset_AppliesDimensions()
     {
-        var vm = new PreviewViewModel();
+        var vm = new PreviewViewModel
+        {
+            IsLandscape = true,
+        };
 
-        vm.SelectedPreset = "Desktop";
+        vm.SelectedPreset = "FHD 1920x1080";
 
         Assert.Equal(1920, vm.ViewportWidth);
         Assert.Equal(1080, vm.ViewportHeight);
@@ -81,12 +87,15 @@ public sealed class PreviewViewModelViewportTests
     [Fact]
     public void SelectWidescreenPreset_AppliesDimensions()
     {
-        var vm = new PreviewViewModel();
+        var vm = new PreviewViewModel
+        {
+            IsLandscape = true,
+        };
 
-        vm.SelectedPreset = "Widescreen";
+        vm.SelectedPreset = "Widescreen 38 inch";
 
-        Assert.Equal(2560, vm.ViewportWidth);
-        Assert.Equal(1440, vm.ViewportHeight);
+        Assert.Equal(3840, vm.ViewportWidth);
+        Assert.Equal(1600, vm.ViewportHeight);
     }
 
     [Fact]
@@ -163,10 +172,11 @@ public sealed class PreviewViewModelViewportTests
         Assert.Contains("Responsive", presets);
         Assert.Contains("iPhone 14 Pro Max", presets);
         Assert.Contains("Pixel 8 Pro", presets);
-        Assert.Contains("Tablet", presets);
-        Assert.Contains("Laptop", presets);
-        Assert.Contains("Desktop", presets);
-        Assert.Contains("Widescreen", presets);
+        Assert.Contains("iPad Mini", presets);
+        Assert.Contains("HD 1366x768", presets);
+        Assert.Contains("FHD 1920x1080", presets);
+        Assert.Contains("Desktop 2560x1440", presets);
+        Assert.Contains("Widescreen 38 inch", presets);
     }
 
     [Fact]
