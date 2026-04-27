@@ -2,6 +2,14 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>awen</ToolCommandName>
+    <PackageId>Awen</PackageId>
+    <Description>Storybook for Avalonia — interactive story browser for UI components.</Description>
+    <PackageTags>avalonia;storybook;ui;tool</PackageTags>
+    <PackageProjectUrl>https://github.com/ryandanthony/awen</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/ryandanthony/awen</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
     <!-- Bundle native libs (e.g. libSkiaSharp) inside the single-file executable -->
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <!-- CA1501: Avalonia controls have deep inheritance hierarchies by design -->

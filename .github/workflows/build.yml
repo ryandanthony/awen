@@ -83,6 +83,7 @@ jobs:
             --self-contained \
             --output ./publish/linux-x64 \
             /p:PublishSingleFile=true
+          mv ./publish/linux-x64/Awen ./publish/linux-x64/awen-linux-x64
 
       # Publish win-x64
       - name: Publish win-x64
@@ -93,12 +94,38 @@ jobs:
             --self-contained \
             --output ./publish/win-x64 \
             /p:PublishSingleFile=true
+          mv ./publish/win-x64/Awen.exe ./publish/win-x64/awen-win-x64.exe
 
-      # Pack Awen.Sdk NuGet package
-      - name: Pack Awen.Sdk
+      # Publish osx-x64
+      - name: Publish osx-x64
+        run: |
+          dotnet publish src/Awen/Awen.csproj \
+            --configuration Release \
+            --runtime osx-x64 \
+            --self-contained \
+            --output ./publish/osx-x64 \
+            /p:PublishSingleFile=true
+          mv ./publish/osx-x64/Awen ./publish/osx-x64/awen-osx-x64
+
+      # Publish osx-arm64
+      - name: Publish osx-arm64
+        run: |
+          dotnet publish src/Awen/Awen.csproj \
+            --configuration Release \
+            --runtime osx-arm64 \
+            --self-contained \
+            --output ./publish/osx-arm64 \
+            /p:PublishSingleFile=true
+          mv ./publish/osx-arm64/Awen ./publish/osx-arm64/awen-osx-arm64
+
+      # Pack Awen.Sdk and Awen NuGet packages
+      - name: Pack NuGet packages
         if: github.ref == 'refs/heads/main'
         run: |
           dotnet pack src/Awen.Sdk/Awen.Sdk.csproj \
+            --no-build \
+            --configuration Release
+          dotnet pack src/Awen/Awen.csproj \
             --no-build \
             --configuration Release
 
@@ -111,14 +138,20 @@ jobs:
           name: v${{ steps.version.outputs.majorMinorPatch }}
           generate_release_notes: true
           files: |
-            publish/linux-x64/Awen
-            publish/win-x64/Awen.exe
+            publish/linux-x64/awen-linux-x64
+            publish/win-x64/awen-win-x64.exe
+            publish/osx-x64/awen-osx-x64
+            publish/osx-arm64/awen-osx-arm64
 
-      # Publish Awen.Sdk to NuGet
-      - name: Publish Awen.Sdk to NuGet
+      # Publish NuGet packages
+      - name: Publish NuGet packages
         if: github.ref == 'refs/heads/main'
         run: |
           dotnet nuget push src/Awen.Sdk/bin/Release/*.nupkg \
+            --api-key ${{ secrets.NUGET_API_KEY }} \
+            --source https://api.nuget.org/v3/index.json \
+            --skip-duplicate
+          dotnet nuget push src/Awen/bin/Release/*.nupkg \
             --api-key ${{ secrets.NUGET_API_KEY }} \
             --source https://api.nuget.org/v3/index.json \
             --skip-duplicate
