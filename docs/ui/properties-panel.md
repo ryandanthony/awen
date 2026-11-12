@@ -51,3 +51,5 @@ See [Story Structure](../sdk/story-structure) for complete examples of property 
 ## Error Handling
 
 If `CreateProperties()` throws an exception, the properties panel displays an error message instead of the editor controls.
+
+If the story throws while you are using it, the editor is removed and the panel says the story stopped. Use **Retry** in the preview to reload both. See [Story Errors](./preview-canvas#story-errors).

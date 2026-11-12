@@ -2,7 +2,8 @@
 
   <PropertyGroup>
     <IsPackable>false</IsPackable>
-    <NoWarn>CA1707</NoWarn>
+    <!-- CA1501: Avalonia controls have deep inheritance hierarchies by design (test controls derive from Control) -->
+    <NoWarn>CA1707;CA1501</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -10,6 +11,9 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="xunit" />
     <PackageReference Include="xunit.runner.visualstudio" />
+    <!-- Headless Avalonia for end-to-end tests of the real MainWindow (same Avalonia version as the flavor). -->
+    <PackageReference Include="Avalonia.Headless" />
+    <PackageReference Include="Avalonia.Skia" />
   </ItemGroup>
 
   <ItemGroup>

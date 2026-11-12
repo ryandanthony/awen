@@ -6,6 +6,7 @@
 
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows.Input;
 using Avalonia.Controls;
 using Avalonia.Styling;
 using Awen.Configuration;
@@ -32,6 +33,8 @@ public sealed class PreviewViewModel : INotifyPropertyChanged
     private Control? _previewContent;
     private string? _description;
     private string? _errorMessage;
+    private string? _errorDetails;
+    private string? _errorSource;
     private bool _isDarkTheme;
     private bool _isLandscape;
     private ResourceDictionary? _libraryTheme;
@@ -49,6 +52,7 @@ public sealed class PreviewViewModel : INotifyPropertyChanged
     public PreviewViewModel(ViewportConfigStore? viewportConfigStore = null)
     {
         _viewportConfigStore = viewportConfigStore ?? new ViewportConfigStore();
+        RetryCommand = new RelayCommand(Retry);
         ReloadViewportConfiguration();
     }
 
@@ -171,6 +175,7 @@ public sealed class PreviewViewModel : INotifyPropertyChanged
 
     /// <summary>
     /// Gets the error message if story rendering failed, or null when successful.
+    /// Short summary, shown in red in the preview area.
     /// </summary>
     public string? ErrorMessage
     {
@@ -182,6 +187,37 @@ public sealed class PreviewViewModel : INotifyPropertyChanged
             OnPropertyChanged(nameof(HasError));
         }
     }
+
+    /// <summary>
+    /// Gets the full error details (exception type, message and stack trace) for the current error, or null.
+    /// </summary>
+    public string? ErrorDetails
+    {
+        get => _errorDetails;
+        private set
+        {
+            _errorDetails = value;
+            OnPropertyChanged();
+        }
+    }
+
+    /// <summary>
+    /// Gets a short label for where the error happened, such as "CreateControl()" or "While running the story".
+    /// </summary>
+    public string? ErrorSource
+    {
+        get => _errorSource;
+        private set
+        {
+            _errorSource = value;
+            OnPropertyChanged();
+        }
+    }
+
+    /// <summary>
+    /// Gets a command that re-creates the selected story after an error.
+    /// </summary>
+    public ICommand RetryCommand { get; }
 
     /// <summary>
     /// Gets a value indicating whether there is an error to display.
@@ -347,6 +383,38 @@ public sealed class PreviewViewModel : INotifyPropertyChanged
     public event PropertyChangedEventHandler? PropertyChanged;
 
     /// <summary>
+    /// Raised when the user asks to retry after an error, after the preview has been re-created.
+    /// The main window uses it to reload the properties panel too.
+    /// </summary>
+    public event EventHandler? Retried;
+
+    /// <summary>
+    /// Replaces the preview with an error raised by story code while it was running
+    /// (for example a click handler, a binding setter or the control's layout).
+    /// The broken control is removed so it cannot keep failing.
+    /// </summary>
+    /// <param name="exception">The exception the story threw.</param>
+    public void ShowStoryError(Exception exception)
+    {
+        ArgumentNullException.ThrowIfNull(exception);
+        SetError("While running the story", StoryErrors.Unwrap(exception));
+    }
+
+    /// <summary>
+    /// Re-creates the selected story, clearing any error.
+    /// </summary>
+    public void Retry()
+    {
+        if (_selectedStory is null)
+        {
+            return;
+        }
+
+        RenderStory(_selectedStory);
+        Retried?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>
     /// Ensures user viewport config exists, then returns editable devices.
     /// </summary>
     /// <returns>Editable device list.</returns>
@@ -421,7 +489,7 @@ public sealed class PreviewViewModel : INotifyPropertyChanged
 
     private void RenderStory(StoryDescriptor? descriptor)
     {
-        ErrorMessage = null;
+        ClearError();
 
         if (descriptor is null)
         {
@@ -432,6 +500,14 @@ public sealed class PreviewViewModel : INotifyPropertyChanged
         }
 
         Description = descriptor.Description;
+
+        if (descriptor.LoadError is { } loadError)
+        {
+            LibraryTheme = null;
+            SetError("Loading the story", loadError);
+            return;
+        }
+
         LoadLibraryTheme(descriptor);
 
         try
@@ -444,10 +520,26 @@ public sealed class PreviewViewModel : INotifyPropertyChanged
         catch (Exception ex)
 #pragma warning restore CA1031
         {
-            PreviewContent = null;
-            ErrorMessage = $"CreateControl() failed for '{descriptor.Name}': {ex.Message}";
-            LogPanel?.AddLog(LogLevel.Error, "Preview", $"CreateControl() failed for '{descriptor.Name}':\n{ex}");
+            SetError("CreateControl()", StoryErrors.Unwrap(ex));
         }
+    }
+
+    private void SetError(string source, Exception exception)
+    {
+        PreviewContent = null;
+        ErrorSource = source;
+        ErrorDetails = exception.ToString();
+        ErrorMessage = StoryErrors.Summarize(exception);
+
+        var storyName = _selectedStory?.Name ?? "story";
+        LogPanel?.AddLog(LogLevel.Error, "Preview", $"{source} failed for '{storyName}':\n{exception}");
+    }
+
+    private void ClearError()
+    {
+        ErrorSource = null;
+        ErrorDetails = null;
+        ErrorMessage = null;
     }
 
     private void LoadLibraryTheme(StoryDescriptor descriptor)

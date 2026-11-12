@@ -7,6 +7,8 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
+using Awen.Discovery;
 using Awen.ViewModels;
 using Awen.Views;
 
@@ -39,6 +41,25 @@ public sealed class App : Application
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop && Options is not null)
         {
             var viewModel = new MainWindowViewModel(Options, OriginalArgs);
+
+            // Story code that throws while running must not take the app down. Lives until the app exits.
+#pragma warning disable CA2000 // Disposed in the Exit handler below.
+            var errorGuard = new StoryErrorGuard(Dispatcher.UIThread, viewModel.HandleStoryException, () => desktop.Windows);
+#pragma warning restore CA2000
+            desktop.Exit += (_, _) =>
+            {
+                errorGuard.Dispose();
+                viewModel.Dispose();
+            };
+            TaskScheduler.UnobservedTaskException += (_, e) =>
+            {
+                e.SetObserved();
+                Dispatcher.UIThread.Post(() => viewModel.LogPanel.AddLog(
+                    LogLevel.Error,
+                    "App",
+                    $"Unobserved task exception:\n{StoryErrors.Unwrap(e.Exception)}"));
+            };
+
             desktop.MainWindow = new MainWindow
             {
                 DataContext = viewModel,

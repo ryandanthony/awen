@@ -133,4 +133,42 @@ public sealed class PropertyPanelViewModelTests
         Assert.Contains(nameof(PropertyPanelViewModel.PropertiesContent), raised);
         Assert.Contains(nameof(PropertyPanelViewModel.HasStorySelected), raised);
     }
+
+    [Fact]
+    public void StopForError_RemovesEditor_AndExplainsRetry()
+    {
+        var vm = new PropertyPanelViewModel();
+        vm.LoadStory(CreateDescriptor(new PrimaryButtonStory()));
+
+        vm.StopForError();
+
+        Assert.Null(vm.PropertiesContent);
+        Assert.True(vm.HasError);
+        Assert.Contains("Retry", vm.ErrorMessage, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void StopForError_NoStory_DoesNothing()
+    {
+        var vm = new PropertyPanelViewModel();
+
+        vm.StopForError();
+
+        Assert.False(vm.HasError);
+    }
+
+    [Fact]
+    public void LoadStory_WithLoadError_DoesNotCallCreateProperties()
+    {
+        var vm = new PropertyPanelViewModel();
+        var descriptor = CreateDescriptor(new PrimaryButtonStory()) with
+        {
+            LoadError = new InvalidOperationException("Constructor failed."),
+        };
+
+        vm.LoadStory(descriptor);
+
+        Assert.Null(vm.PropertiesContent);
+        Assert.True(vm.HasError);
+    }
 }

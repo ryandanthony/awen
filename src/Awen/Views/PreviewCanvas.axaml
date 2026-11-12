@@ -7,13 +7,33 @@
     <UserControl.Resources>
         <conv:InfinityToNaNConverter x:Key="InfinityToNaN" />
     </UserControl.Resources>
+    <UserControl.Styles>
+        <!-- Error view buttons use Awen's own colors, not the preview theme variant. -->
+        <Style Selector=":is(Button).error-action">
+            <Setter Property="Background" Value="{DynamicResource LightSurfaceVariant}" />
+            <Setter Property="Foreground" Value="{DynamicResource LightText}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource LightBorder}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="16,4" />
+            <Setter Property="MinWidth" Value="88" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+        </Style>
+        <Style Selector=":is(Button).error-action:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource LightBorder}" />
+            <Setter Property="Foreground" Value="{DynamicResource LightText}" />
+        </Style>
+        <Style Selector="ToggleButton.error-action:checked /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource LightBorder}" />
+            <Setter Property="Foreground" Value="{DynamicResource LightText}" />
+        </Style>
+    </UserControl.Styles>
     <ThemeVariantScope x:Name="PART_ThemeScope" RequestedThemeVariant="{Binding ThemeVariant}">
         <Panel Background="{DynamicResource CanvasOuterBackground}">
             <!-- Empty state: no story selected -->
             <StackPanel VerticalAlignment="Center"
                         HorizontalAlignment="Center"
                         Spacing="8"
-                        IsVisible="{Binding !SelectedStory}">
+                        IsVisible="{Binding SelectedStory, Converter={x:Static ObjectConverters.IsNull}}">
                 <TextBlock Text="👀"
                            FontSize="32"
                            HorizontalAlignment="Center" />
@@ -29,31 +49,62 @@
                            Opacity="0.7" />
             </StackPanel>
 
-            <!-- Error overlay -->
-            <ScrollViewer VerticalScrollBarVisibility="Auto"
-                         HorizontalScrollBarVisibility="Disabled"
-                         IsVisible="{Binding HasError}"
-                         Padding="24">
+            <!-- Error state: the story failed to load or threw while running. Awen keeps running. -->
+            <ScrollViewer x:Name="PART_ErrorView"
+                          VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled"
+                          IsVisible="{Binding HasError}"
+                          Padding="24">
                 <StackPanel VerticalAlignment="Center"
                             HorizontalAlignment="Center"
                             Spacing="12"
-                            MaxWidth="600">
-                    <TextBlock Text="⚠️ Error"
+                            MaxWidth="720">
+                    <TextBlock Text="⚠️ This story threw an error"
                                FontWeight="Bold"
                                Foreground="{DynamicResource ColorError}"
-                               FontSize="14"
+                               FontSize="16"
+                               HorizontalAlignment="Center" />
+                    <TextBlock Text="{Binding ErrorSource}"
+                               Foreground="{DynamicResource LightTextSecondary}"
+                               FontSize="12"
                                HorizontalAlignment="Center" />
                     <Border Background="{DynamicResource LightBackground}"
                             BorderBrush="{DynamicResource ColorError}"
                             BorderThickness="1"
                             CornerRadius="4"
                             Padding="16">
-                        <SelectableTextBlock Text="{Binding ErrorMessage}"
+                        <SelectableTextBlock x:Name="PART_ErrorMessage"
+                                             Text="{Binding ErrorMessage}"
                                              TextWrapping="Wrap"
-                                             Foreground="{DynamicResource LightText}"
+                                             Foreground="{DynamicResource ColorError}"
                                              FontFamily="Cascadia Mono, Consolas, monospace"
-                                             FontSize="12"
-                                             LineHeight="18" />
+                                             FontSize="13"
+                                             LineHeight="20" />
+                    </Border>
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Center"
+                                Spacing="8">
+                        <Button x:Name="PART_RetryButton"
+                                Classes="error-action"
+                                Content="Retry"
+                                Command="{Binding RetryCommand}" />
+                        <ToggleButton x:Name="PART_DetailsToggle"
+                                      Classes="error-action"
+                                      Content="Details"
+                                      IsVisible="{Binding ErrorDetails, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+                    </StackPanel>
+                    <Border Background="{DynamicResource LightBackground}"
+                            BorderBrush="{DynamicResource LightBorder}"
+                            BorderThickness="1"
+                            CornerRadius="4"
+                            Padding="12"
+                            IsVisible="{Binding #PART_DetailsToggle.IsChecked}">
+                        <SelectableTextBlock Text="{Binding ErrorDetails}"
+                                             TextWrapping="Wrap"
+                                             Foreground="{DynamicResource ColorError}"
+                                             FontFamily="Cascadia Mono, Consolas, monospace"
+                                             FontSize="11"
+                                             LineHeight="16" />
                     </Border>
                 </StackPanel>
             </ScrollViewer>
