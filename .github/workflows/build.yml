@@ -134,6 +134,10 @@ jobs:
     needs: build
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    # Job-level permissions replace the workflow-level ones, so restate contents: write.
+    permissions:
+      contents: write   # GitHub releases + tags
+      id-token: write   # OIDC token for NuGet trusted publishing
 
     steps:
       - name: Download artifacts
@@ -173,12 +177,22 @@ jobs:
         with:
           dotnet-version: 10.0.x
 
+      # Trusted publishing: exchange the GitHub OIDC token for a 1-hour nuget.org API key.
+      # Policy on nuget.org: owner ryandanthony, repo awen, workflow build.yml.
+      - name: NuGet login (OIDC)
+        uses: NuGet/login@v1
+        id: nuget-login
+        with:
+          user: ryandanthony
+
       # Awen 1.x, Awen 2.x, Awen.Sdk
       - name: Publish NuGet packages
+        env:
+          NUGET_API_KEY: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
         run: |
           for PKG in artifacts/*/nupkg/*.nupkg; do
             dotnet nuget push "$PKG" \
-              --api-key ${{ secrets.NUGET_API_KEY }} \
+              --api-key "$NUGET_API_KEY" \
               --source https://api.nuget.org/v3/index.json \
               --skip-duplicate
           done
