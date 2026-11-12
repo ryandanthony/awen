@@ -13,6 +13,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Embedded font registered by Startup.cs (IAwenStartup). Noto Mono, SIL OFL 1.1 (see OFL.txt). -->
+    <AvaloniaResource Include="Assets/Fonts/*.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\src\Awen.Sdk\Awen.Sdk.csproj" />
     <ProjectReference Include="..\ExampleUI\ExampleUI.csproj" />
   </ItemGroup>

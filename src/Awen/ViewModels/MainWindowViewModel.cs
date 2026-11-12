@@ -7,6 +7,7 @@
 using System.ComponentModel;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using Avalonia;
 using Awen.Discovery;
 
 namespace Awen.ViewModels;
@@ -17,6 +18,7 @@ namespace Awen.ViewModels;
 public sealed class MainWindowViewModel : INotifyPropertyChanged, IDisposable
 {
     private const string HotReloadCategory = "HotReload";
+    private const string StartupCategory = "Startup";
 
     private readonly string[] _originalArgs;
     private DirectoryWatcher? _directoryWatcher;
@@ -54,6 +56,13 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged, IDisposable
         Sidebar.PropertyChanged += OnSidebarPropertyChanged;
 
         LogDiscoveryResults(assemblies, loadErrors);
+
+        // Library startup hooks run before any story renders (including a restored selection).
+        if (Application.Current is { } application)
+        {
+            RunStartupHooks(assemblies, application);
+        }
+
         RestoreState(options.RestoreFile);
         StartWatching(options);
     }
@@ -136,6 +145,24 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged, IDisposable
                 LogLevel.Warning,
                 "Discovery",
                 $"No story assemblies found in {Options.Dir.FullName}");
+        }
+    }
+
+    private void RunStartupHooks(IReadOnlyList<StoryAssemblyInfo> assemblies, Application application)
+    {
+        foreach (var result in StoryStartupRunner.Run(assemblies, application))
+        {
+            if (result.Success)
+            {
+                LogPanel.AddLog(LogLevel.Info, StartupCategory, $"Ran {result.StartupTypeName} for '{result.LibraryName}'");
+                continue;
+            }
+
+            var details = result.Exception is null ? string.Empty : $"\n{result.Exception}";
+            LogPanel.AddLog(
+                LogLevel.Error,
+                StartupCategory,
+                $"Startup hook for '{result.LibraryName}' failed: {result.Error}{details}");
         }
     }
 

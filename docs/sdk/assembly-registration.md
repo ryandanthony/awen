@@ -18,6 +18,7 @@ public sealed class AwenStoryAssemblyAttribute : Attribute
     public string LibraryName { get; }
     public string? LightThemeResourcePath { get; set; }
     public string? DarkThemeResourcePath { get; set; }
+    public Type? StartupType { get; set; }
 }
 ```
 
@@ -48,6 +49,16 @@ using Awen.Sdk;
 
 The paths should be **embedded resource** paths within the story assembly. Awen loads these as `ResourceDictionary` instances and merges them into the application resources when the theme is active.
 
+## Startup Hook
+
+To register fonts or do other app setup before any story renders, point `StartupType` at a class that implements `IAwenStartup`:
+
+```csharp
+[assembly: AwenStoryAssembly("My Component Library", StartupType = typeof(MyLibStartup))]
+```
+
+See [Startup Hook](./startup-hook) for details.
+
 ## Discovery Process
 
 When Awen scans the `--dir` directory, it:
@@ -56,3 +67,4 @@ When Awen scans the `--dir` directory, it:
 2. Checks for `[AwenStoryAssembly]` on the assembly
 3. If found, scans all exported types for `IStory<,>` implementations
 4. Builds the sidebar tree from each story's `Group` property, nested under the `LibraryName`
+5. Runs each library's startup hook, if it has one

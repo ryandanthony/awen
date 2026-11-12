@@ -34,6 +34,11 @@ public sealed record StoryAssemblyInfo
     public string? DarkThemeResourcePath { get; init; }
 
     /// <summary>
+    /// Gets the optional startup hook type from <c>[AwenStoryAssembly(StartupType = ...)]</c>.
+    /// </summary>
+    public Type? StartupType { get; init; }
+
+    /// <summary>
     /// Gets the absolute path to the DLL on disk.
     /// </summary>
     public required string FilePath { get; init; }
