@@ -14,6 +14,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Awen\Awen.csproj" />
+    <!-- Real story assembly (built for the same Avalonia flavor) used by scanner/version-check tests. -->
+    <ProjectReference Include="..\..\examples\ExampleUI.Stories\ExampleUI.Stories.csproj" />
   </ItemGroup>
 
   <ItemGroup>

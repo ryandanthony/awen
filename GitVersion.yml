@@ -1,5 +1,8 @@
 mode: ContinuousDelivery
-tag-prefix: v
+# Only v1.* tags drive versioning. v1.N.P is the shared Minor.Patch line: Awen.Sdk and the
+# Avalonia 11 host ship as 1.N.P, the Avalonia 12 host ships the same commit as 2.N.P
+# (major swapped in Directory.Build.targets). v2.* tags are therefore ignored here.
+tag-prefix: '[vV](?=1\.)'
 strategies:
   - Mainline
   - TaggedCommit
@@ -8,8 +11,11 @@ assembly-versioning-scheme: MajorMinor
 assembly-file-versioning-scheme: MajorMinorPatch
 assembly-informational-format: '{SemVer}+{ShortSha}'
 
-major-version-bump-message: '^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\(.*\))?!:.*'
-minor-version-bump-message: '^feat(\(.*\))?:.*'
+# Major is fixed: it encodes the Avalonia flavor (1 = Avalonia 11, 2 = Avalonia 12), so breaking
+# commit messages never bump it (feat!/BREAKING CHANGE/+semver: major are verified to stay on 1.x;
+# feat! bumps the minor). Breaking SDK changes would need a new tag line, decided by hand.
+major-version-bump-message: '^\b$'
+minor-version-bump-message: '^feat(\(.*\))?!?:.*'
 patch-version-bump-message: '^fix(\(.*\))?:.*'
 no-bump-message: '^(docs|style|chore|ci|build|test|refactor)(\(.*\))?:.*'
 
@@ -25,7 +31,7 @@ branches:
     is-release-branch: true
     is-main-branch: true
   feature:
-    regex: ^(feature|feat)[/-]
+    regex: ^(feature|feat)[/-](?<BranchName>.+)
     mode: ContinuousDelivery
     label: '{BranchName}'
     increment: Inherit

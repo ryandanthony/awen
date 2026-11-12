@@ -13,7 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" />
+    <!-- One SDK for every Awen host: built against Avalonia 11, binary-compatible with 12 (verified). -->
+    <PackageReference Include="Avalonia" VersionOverride="$(AwenSdkAvaloniaRange)" />
   </ItemGroup>
 
 </Project>
