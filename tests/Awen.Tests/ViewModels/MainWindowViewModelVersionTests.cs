@@ -30,6 +30,18 @@ public sealed class MainWindowViewModelVersionTests
     }
 
     [Fact]
+    public void Version_Major_FollowsAvaloniaFlavor()
+    {
+        // Awen 1.x runs Avalonia 11, Awen 2.x runs Avalonia 12 (Directory.Build.targets: ApplyAwenHostMajor).
+#if AVALONIA11
+        const string expectedPrefix = "1.";
+#else
+        const string expectedPrefix = "2.";
+#endif
+        Assert.StartsWith(expectedPrefix, MainWindowViewModel.Version, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void Version_DoesNotContainPlusHash_WhenShortened()
     {
         // The InformationalVersion may contain "+sha" suffix from GitVersion.
