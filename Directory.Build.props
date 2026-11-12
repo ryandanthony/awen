@@ -8,6 +8,31 @@
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
   </PropertyGroup>
 
+  <!--
+    Avalonia flavor. The host (Awen) is built once per Avalonia major version:
+      dotnet build                       -> Avalonia 11, Awen 1.x
+      dotnet build -p:AvaloniaMajor=12   -> Avalonia 12, Awen 2.x
+    Awen.Sdk is always compiled against Avalonia 11 and works with both.
+    Flavor 12 uses separate bin/obj folders so both flavors can coexist on disk.
+  -->
+  <PropertyGroup>
+    <AvaloniaMajor Condition="'$(AvaloniaMajor)' == ''">11</AvaloniaMajor>
+    <AwenHostMajor>$([MSBuild]::Subtract($(AvaloniaMajor), 10))</AwenHostMajor>
+    <DefineConstants>$(DefineConstants);AVALONIA$(AvaloniaMajor)</DefineConstants>
+    <!-- Never compile anything from either flavor's output folders. -->
+    <DefaultItemExcludes>$(DefaultItemExcludes);bin/**;obj/**</DefaultItemExcludes>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(AvaloniaMajor)' != '11'">
+    <BaseOutputPath>bin/avalonia$(AvaloniaMajor)/</BaseOutputPath>
+    <BaseIntermediateOutputPath>obj/avalonia$(AvaloniaMajor)/</BaseIntermediateOutputPath>
+  </PropertyGroup>
+
+  <!-- Assembly attributes come from MSBuild properties (see Directory.Build.targets), not GitVersion's generated file. -->
+  <PropertyGroup>
+    <UpdateAssemblyInfo>false</UpdateAssemblyInfo>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="FestinaLente.CodeStandards" PrivateAssets="all" />
   </ItemGroup>

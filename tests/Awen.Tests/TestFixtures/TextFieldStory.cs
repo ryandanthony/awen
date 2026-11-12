@@ -28,7 +28,11 @@ public sealed class TextFieldStory : IStory<UserControl, UserControl>
 
     /// <inheritdoc/>
     public UserControl CreateControl() =>
+#if AVALONIA11
         new() { Content = new TextBox { Watermark = "Enter text..." }, DataContext = this };
+#else
+        new() { Content = new TextBox { PlaceholderText = "Enter text..." }, DataContext = this };
+#endif
 
     /// <inheritdoc/>
     public UserControl CreateProperties() =>

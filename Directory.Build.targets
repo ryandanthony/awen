@@ -6,4 +6,32 @@
       <AdditionalFiles Remove="%(Identity)" Condition="'%(Filename)%(Extension)' == 'stylecop.json' and '%(Identity)' != '$(MSBuildThisFileDirectory)stylecop.json'" />
     </ItemGroup>
   </Target>
+
+  <!--
+    Awen major version follows the Avalonia flavor: Awen 1.x = Avalonia 11, Awen 2.x = Avalonia 12.
+    GitVersion computes a shared Minor.Patch (it only reads v1.* tags, see GitVersion.yml). For the host
+    (AwenIsHost=true) we swap in the flavor's major, so one commit builds as 1.4.0 and 2.4.0.
+    Libraries (Awen.Sdk) keep the plain GitVersion version.
+    Runs after GitVersion's GetVersion and before the SDK turns $(Version) into assembly attributes / nuspec.
+  -->
+  <Target Name="ApplyAwenHostMajor"
+          AfterTargets="GetVersion"
+          BeforeTargets="GetAssemblyVersion;GenerateNuspec;_GetOutputItemsFromPack"
+          Condition="'$(AwenIsHost)' == 'true' and '$(GitVersion_Minor)' != ''">
+    <PropertyGroup>
+      <_AwenMajorMinorPatch>$(AwenHostMajor).$(GitVersion_Minor).$(GitVersion_Patch)</_AwenMajorMinorPatch>
+      <Version>$(_AwenMajorMinorPatch)$(GitVersion_PreReleaseTagWithDash)</Version>
+      <VersionPrefix>$(_AwenMajorMinorPatch)</VersionPrefix>
+      <PackageVersion>$(Version)</PackageVersion>
+      <AssemblyVersion>$(AwenHostMajor).$(GitVersion_Minor).0.0</AssemblyVersion>
+      <FileVersion>$(_AwenMajorMinorPatch).0</FileVersion>
+      <InformationalVersion>$(Version)+$(GitVersion_ShortSha)</InformationalVersion>
+    </PropertyGroup>
+  </Target>
+
+  <!-- Prints the computed host version; CI uses this for release names. -->
+  <Target Name="PrintAwenVersion" DependsOnTargets="GetVersion;ApplyAwenHostMajor">
+    <Message Importance="High" Text="AWEN_VERSION=$(Version)" />
+    <Message Importance="High" Text="AWEN_MAJOR_MINOR_PATCH=$(VersionPrefix)" />
+  </Target>
 </Project>

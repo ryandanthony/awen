@@ -3,16 +3,24 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
 
+  <!-- AvaloniaMajor is set in Directory.Build.props (default 11, override with -p:AvaloniaMajor=12). -->
+  <PropertyGroup>
+    <AvaloniaVersion Condition="'$(AvaloniaMajor)' == '11'">11.3.23</AvaloniaVersion>
+    <AvaloniaVersion Condition="'$(AvaloniaMajor)' == '12'">12.1.6</AvaloniaVersion>
+    <!-- Awen.Sdk compiles against the lowest supported Avalonia and accepts any supported major. -->
+    <AwenSdkAvaloniaRange>[11.3.23, 13.0.0)</AwenSdkAvaloniaRange>
+  </PropertyGroup>
+
   <ItemGroup Label="Code Quality">
     <PackageVersion Include="FestinaLente.CodeStandards" Version="1.1.10" />
     <PackageVersion Include="GitVersion.MsBuild" Version="6.8.2" />
   </ItemGroup>
 
   <ItemGroup Label="UI - Avalonia">
-    <PackageVersion Include="Avalonia" Version="11.3.23" />
-    <PackageVersion Include="Avalonia.Desktop" Version="11.3.23" />
-    <PackageVersion Include="Avalonia.Themes.Fluent" Version="11.3.23" />
-    <PackageVersion Include="Avalonia.Markup.Xaml.Loader" Version="11.3.23" />
+    <PackageVersion Include="Avalonia" Version="$(AvaloniaVersion)" />
+    <PackageVersion Include="Avalonia.Desktop" Version="$(AvaloniaVersion)" />
+    <PackageVersion Include="Avalonia.Themes.Fluent" Version="$(AvaloniaVersion)" />
+    <PackageVersion Include="Avalonia.Markup.Xaml.Loader" Version="$(AvaloniaVersion)" />
   </ItemGroup>
 
   <ItemGroup Label="CLI">

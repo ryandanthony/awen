@@ -5,6 +5,8 @@
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>awen</ToolCommandName>
     <PackageId>Awen</PackageId>
+    <!-- Version major follows Avalonia: 1.x = Avalonia 11, 2.x = Avalonia 12 (see Directory.Build.targets). -->
+    <AwenIsHost>true</AwenIsHost>
     <Description>Storybook for Avalonia — interactive story browser for UI components.</Description>
     <PackageTags>avalonia;storybook;ui;tool</PackageTags>
     <PackageProjectUrl>https://github.com/ryandanthony/awen</PackageProjectUrl>
@@ -15,6 +17,12 @@
     <!-- CA1501: Avalonia controls have deep inheritance hierarchies by design -->
     <!-- S2333: partial is required for Avalonia XAML code generation -->
     <NoWarn>$(NoWarn);CA1501;S2333</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(AvaloniaMajor)' == '12'">
+    <!-- AVLN5001: TextBox.Watermark is obsolete in Avalonia 12 (PlaceholderText), but PlaceholderText
+         does not exist in 11. XAML keeps Watermark so one file serves both flavors. -->
+    <NoWarn>$(NoWarn);AVLN5001</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
