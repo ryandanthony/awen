@@ -55,4 +55,10 @@ public sealed record StoryDescriptor
     /// Used for selection persistence across reloads.
     /// </summary>
     public required string Identity { get; init; }
+
+    /// <summary>
+    /// Gets the error raised while creating the story (constructor or metadata getters), or <see langword="null"/>
+    /// when the story loaded. A faulted story stays in the sidebar so the error can be shown in the preview.
+    /// </summary>
+    public Exception? LoadError { get; init; }
 }

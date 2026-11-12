@@ -105,6 +105,13 @@ public sealed class PropertyPanelViewModel : INotifyPropertyChanged
 
         HasStorySelected = true;
 
+        if (story.LoadError is not null)
+        {
+            PropertiesContent = null;
+            ErrorMessage = "This story could not be loaded. See the preview for the error.";
+            return;
+        }
+
         try
         {
             var properties = story.StoryInstance.CreateProperties();
@@ -115,10 +122,26 @@ public sealed class PropertyPanelViewModel : INotifyPropertyChanged
         catch (Exception ex)
 #pragma warning restore CA1031
         {
+            var cause = StoryErrors.Unwrap(ex);
             PropertiesContent = null;
-            ErrorMessage = $"CreateProperties() failed for '{story.Name}': {ex.Message}";
-            LogPanel?.AddLog(LogLevel.Error, "Properties", $"CreateProperties() failed for '{story.Name}':\n{ex}");
+            ErrorMessage = $"CreateProperties() failed for '{story.Name}': {StoryErrors.Summarize(cause)}";
+            LogPanel?.AddLog(LogLevel.Error, "Properties", $"CreateProperties() failed for '{story.Name}':\n{cause}");
         }
+    }
+
+    /// <summary>
+    /// Removes the properties editor after the story failed while running, since it is bound to the same
+    /// (possibly broken) story state. Retry in the preview reloads it.
+    /// </summary>
+    public void StopForError()
+    {
+        if (!HasStorySelected)
+        {
+            return;
+        }
+
+        PropertiesContent = null;
+        ErrorMessage = "The story stopped after an error. Use Retry in the preview to reload it.";
     }
 
     private void OnPropertyChanged([CallerMemberName] string? propertyName = null)

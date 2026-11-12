@@ -11,6 +11,7 @@ The log panel is a collapsible section at the bottom of the Awen window that dis
 
 - **Discovery results** — how many assemblies and stories were found at startup
 - **Load errors** — assemblies that failed to load, with error details
+- **Story errors** — exceptions thrown by a story while loading or running, with the full stack trace
 - **Hot-reload events** — when a DLL change is detected and stories are reloaded
 
 ## Behavior

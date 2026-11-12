@@ -120,7 +120,12 @@ public sealed class AssemblyScanner
         }
     }
 
-    private static List<StoryDescriptor> DiscoverStories(Assembly assembly, string libraryName)
+    /// <summary>
+    /// Sidebar group for stories that could not be created. Shown under the library so the error is easy to find.
+    /// </summary>
+    internal const string LoadErrorGroup = "Load errors";
+
+    internal static List<StoryDescriptor> DiscoverStories(Assembly assembly, string libraryName)
     {
         var stories = new List<StoryDescriptor>();
 
@@ -135,13 +140,39 @@ public sealed class AssemblyScanner
                 continue;
             }
 
-            if (Activator.CreateInstance(type) is IStory<Control, Control> story)
+            // One broken story (throwing constructor or metadata getter) must not hide the rest of the library.
+            try
             {
-                stories.Add(BuildDescriptor(libraryName, story));
+                if (Activator.CreateInstance(type) is IStory<Control, Control> story)
+                {
+                    stories.Add(BuildDescriptor(libraryName, story));
+                }
+            }
+#pragma warning disable CA1031 // Story code can throw anything; report it on the story instead of failing the scan.
+            catch (Exception ex)
+#pragma warning restore CA1031
+            {
+                stories.Add(BuildFaultedDescriptor(libraryName, type, StoryErrors.Unwrap(ex)));
             }
         }
 
         return stories;
+    }
+
+    private static StoryDescriptor BuildFaultedDescriptor(string libraryName, Type type, Exception error)
+    {
+        return new StoryDescriptor
+        {
+            LibraryName = libraryName,
+            Name = type.Name,
+            Group = LoadErrorGroup,
+            GroupSegments = [LoadErrorGroup],
+            Order = int.MaxValue,
+            Description = $"{type.FullName} could not be created.",
+            StoryInstance = new UnloadableStory(error),
+            Identity = $"{libraryName}/{LoadErrorGroup}/{type.FullName}",
+            LoadError = error,
+        };
     }
 
     private static StoryDescriptor BuildDescriptor(string libraryName, IStory<Control, Control> story)

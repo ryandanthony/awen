@@ -54,6 +54,7 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged, IDisposable
 
         // Wire sidebar selection → preview + property panel
         Sidebar.PropertyChanged += OnSidebarPropertyChanged;
+        Preview.Retried += (_, _) => PropertyPanel.LoadStory(Preview.SelectedStory);
 
         LogDiscoveryResults(assemblies, loadErrors);
 
@@ -104,6 +105,27 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged, IDisposable
 
     /// <inheritdoc/>
     public event PropertyChangedEventHandler? PropertyChanged;
+
+    /// <summary>
+    /// Handles an exception that escaped story code while it was running (click handlers, async continuations,
+    /// layout or rendering of the story control). Shows it in red in the preview, stops the properties panel,
+    /// and logs the full exception. Never throws.
+    /// </summary>
+    /// <param name="exception">The unhandled exception.</param>
+    public void HandleStoryException(Exception exception)
+    {
+        ArgumentNullException.ThrowIfNull(exception);
+
+        if (Preview.SelectedStory is null)
+        {
+            LogPanel.AddLog(LogLevel.Error, "App", $"Unhandled error:\n{StoryErrors.Unwrap(exception)}");
+            return;
+        }
+
+        // Preview logs the full exception.
+        Preview.ShowStoryError(exception);
+        PropertyPanel.StopForError();
+    }
 
     /// <inheritdoc/>
     public void Dispose()
@@ -206,13 +228,14 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged, IDisposable
             Preview.ViewportHeight = state.ViewportHeight.Value;
         }
 
-        // Restore selected story
+        // Restore selected story once the main loop runs, so its first layout is covered by the story error guard.
         if (state.SelectedStoryIdentity is not null)
         {
             var story = Registry.FindByIdentity(state.SelectedStoryIdentity);
             if (story is not null)
             {
-                Sidebar.SelectedStory = story;
+                // Posted work only runs once the main loop is running, after the window is shown.
+                Avalonia.Threading.Dispatcher.UIThread.Post(() => Sidebar.SelectedStory ??= story);
             }
             else
             {

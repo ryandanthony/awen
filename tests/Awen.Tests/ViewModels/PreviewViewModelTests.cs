@@ -91,8 +91,70 @@ public sealed class PreviewViewModelTests
         vm.SelectedStory = descriptor;
 
         Assert.Null(vm.PreviewContent);
-        Assert.NotNull(vm.ErrorMessage);
-        Assert.Contains("CreateControl() failed", vm.ErrorMessage, StringComparison.Ordinal);
+        Assert.Equal("CreateControl()", vm.ErrorSource);
+        Assert.Equal("InvalidOperationException: Simulated failure in CreateControl().", vm.ErrorMessage);
+        Assert.Contains("FaultyStory.CreateControl", vm.ErrorDetails, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void ShowStoryError_RemovesContent_AndShowsUnwrappedMessage()
+    {
+        var vm = new PreviewViewModel();
+        vm.SelectedStory = CreateDescriptor(new PrimaryButtonStory());
+        Assert.NotNull(vm.PreviewContent);
+
+        vm.ShowStoryError(new System.Reflection.TargetInvocationException(new FormatException("Bad input")));
+
+        Assert.Null(vm.PreviewContent);
+        Assert.True(vm.HasError);
+        Assert.Equal("While running the story", vm.ErrorSource);
+        Assert.Equal("FormatException: Bad input", vm.ErrorMessage);
+    }
+
+    [Fact]
+    public void Retry_RecreatesStory_AndClearsError()
+    {
+        var vm = new PreviewViewModel();
+        var retried = 0;
+        vm.Retried += (_, _) => retried++;
+        vm.SelectedStory = CreateDescriptor(new PrimaryButtonStory());
+        vm.ShowStoryError(new InvalidOperationException("boom"));
+
+        vm.RetryCommand.Execute(null);
+
+        Assert.False(vm.HasError);
+        Assert.Null(vm.ErrorDetails);
+        Assert.NotNull(vm.PreviewContent);
+        Assert.Equal(1, retried);
+    }
+
+    [Fact]
+    public void SelectingStoryWithLoadError_ShowsLoadError()
+    {
+        var vm = new PreviewViewModel();
+        var descriptor = CreateDescriptor(new PrimaryButtonStory()) with
+        {
+            LoadError = new InvalidOperationException("Constructor failed."),
+        };
+
+        vm.SelectedStory = descriptor;
+
+        Assert.Null(vm.PreviewContent);
+        Assert.Equal("Loading the story", vm.ErrorSource);
+        Assert.Equal("InvalidOperationException: Constructor failed.", vm.ErrorMessage);
+    }
+
+    [Fact]
+    public void Errors_AreLogged_WithFullException()
+    {
+        var log = new LogPanelViewModel();
+        var vm = new PreviewViewModel { LogPanel = log };
+
+        vm.SelectedStory = CreateDescriptor(new FaultyStory());
+
+        var entry = Assert.Single(log.Entries);
+        Assert.Equal(LogLevel.Error, entry.Level);
+        Assert.Contains("FaultyStory.CreateControl", entry.Message, StringComparison.Ordinal);
     }
 
     [Fact]

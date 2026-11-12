@@ -17,6 +17,25 @@ When you select a story in the sidebar:
 
 If `CreateControl()` throws an exception, an error message is displayed instead of the control.
 
+## Story Errors
+
+A story can never crash Awen. When story code throws, Awen removes the story from the preview and shows the error in red in its place, with the exception type and message. This covers:
+
+| When | Example | Shown as |
+|------|---------|----------|
+| Creating the story | The story's constructor or `Name`/`Group` getter throws | **Loading the story** |
+| Creating the control | `CreateControl()` throws | **CreateControl()** |
+| Using the story | A click handler, command, or `async void` handler throws, or the control throws while being measured, arranged, or rendered | **While running the story** |
+
+Under the message:
+
+- **Retry** re-creates the story and its properties panel, so you can try again after fixing state or reloading.
+- **Details** shows the full exception with its stack trace. You can select and copy the text.
+
+The full exception is also written to the [log panel](./log-panel). Stories that can't be created at all are listed under a **Load errors** group in the sidebar, so one broken story doesn't hide the rest of its library.
+
+After an error at run time, the properties panel is cleared too, because it is bound to the same story state. **Retry** brings it back.
+
 ## Viewport Presets
 
 The toolbar provides viewport presets to simulate different screen sizes:
