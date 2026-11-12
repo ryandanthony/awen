@@ -12,6 +12,18 @@ restore:
 build:
   dotnet build --configuration Debug
 
+# Build and test both Avalonia flavors (11 -> Awen 1.x, 12 -> Awen 2.x).
+build-all:
+  dotnet build --configuration Release -p:AvaloniaMajor=11
+  dotnet test --configuration Release --no-build -p:AvaloniaMajor=11
+  dotnet build --configuration Release -p:AvaloniaMajor=12
+  dotnet test --configuration Release --no-build -p:AvaloniaMajor=12
+
+# Build example stories and launch the Avalonia 12 host (Awen 2.x) against them.
+app12:
+  dotnet build examples/ExampleUI.Stories/ExampleUI.Stories.csproj -p:AvaloniaMajor=12
+  dotnet run --project src/Awen -p:AvaloniaMajor=12 -- --dir examples/ExampleUI.Stories/bin/avalonia12/Debug/net10.0/
+
 # Build all projects in Release mode.
 build-release:
   dotnet build --configuration Release

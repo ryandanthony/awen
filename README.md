@@ -21,17 +21,35 @@
 
 ### 1. Install Awen
 
-Download a pre-built binary from [GitHub Releases](https://github.com/ryandanthony/awen/releases), or build from source:
+Pick the Awen major version that matches the Avalonia version of your stories:
+
+| Your stories use | Install | Release binaries |
+|---|---|---|
+| Avalonia 11 | Awen **1.x** | `awen-<platform>` |
+| Avalonia 12 | Awen **2.x** | `awen-avalonia12-<platform>` |
+
+As a .NET tool (pin the major in your tool manifest so updates stay on the right line):
+
+```bash
+dotnet new tool-manifest            # once per repo
+dotnet tool install awen --version "2.*"   # Avalonia 12
+# dotnet tool install awen --version "1.*" # Avalonia 11
+```
+
+Or download a pre-built binary from [GitHub Releases](https://github.com/ryandanthony/awen/releases), or build from source:
 
 ```bash
 git clone https://github.com/ryandanthony/awen.git
 cd awen
-dotnet build
+dotnet build                        # Awen 1.x, Avalonia 11
+dotnet build -p:AvaloniaMajor=12    # Awen 2.x, Avalonia 12
 ```
+
+If the versions don't match, Awen refuses to load the stories and tells you which Awen to install.
 
 ### 2. Add the SDK
 
-Install the [Awen.Sdk](https://www.nuget.org/packages/Awen.Sdk) NuGet package in your stories project:
+Install the [Awen.Sdk](https://www.nuget.org/packages/Awen.Sdk) NuGet package in your stories project. The same SDK package works with Avalonia 11 and Avalonia 12:
 
 ```bash
 dotnet add package Awen.Sdk
@@ -103,6 +121,15 @@ website/               # Docusaurus site
 ## Prerequisites
 
 - [.NET 10 SDK](https://dotnet.microsoft.com/download)
+
+## Avalonia 11 and 12
+
+One codebase builds two hosts. Story assemblies share the host's Avalonia, so they must use the same major version:
+
+- `Awen.Sdk` is compiled against Avalonia 11.3 and depends on Avalonia `[11.3.23, 13.0.0)`, so it works with both.
+- The `Awen` host is built per flavor: `-p:AvaloniaMajor=11` (default) gives Awen 1.x, `-p:AvaloniaMajor=12` gives Awen 2.x. The Avalonia 12 build goes to `bin/avalonia12/` and `obj/avalonia12/`.
+- Version-specific code uses `#if AVALONIA11` / `#if AVALONIA12`.
+- Versioning: GitVersion produces the shared `Minor.Patch` from `v1.*` tags. The Avalonia 12 host swaps in major `2`, so one commit ships as `1.N.P` and `2.N.P`. CI builds, tests and releases both.
 
 ## License
 

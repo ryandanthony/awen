@@ -12,9 +12,22 @@ permissions:
   pull-requests: write
   packages: read
 
+# Awen is built once per Avalonia major version from the same source:
+#   Avalonia 11 -> Awen 1.x (tool, binaries) + Awen.Sdk (works with 11 and 12)
+#   Avalonia 12 -> Awen 2.x (tool, binaries)
+# GitVersion computes a shared Minor.Patch from v1.* tags; the major is the flavor.
+
 jobs:
   build:
+    name: Build (Avalonia ${{ matrix.avalonia }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        avalonia: [11, 12]
+
+    env:
+      FLAVOR: -p:AvaloniaMajor=${{ matrix.avalonia }}
 
     steps:
       # Checkout with full history (needed for GitVersion)
@@ -32,9 +45,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '**/Directory.Build.props') }}
+          key: ${{ runner.os }}-nuget-a${{ matrix.avalonia }}-${{ hashFiles('**/*.csproj', '**/Directory.Build.props', 'Directory.Packages.props') }}
           restore-keys: |
-            ${{ runner.os }}-nuget-
+            ${{ runner.os }}-nuget-a${{ matrix.avalonia }}-
 
       # Configure GitHub Packages NuGet source with credentials
       - name: Configure NuGet Credentials
@@ -45,113 +58,127 @@ jobs:
             --store-password-in-clear-text
 
       - name: Restore
-        run: dotnet restore
+        run: dotnet restore $FLAVOR
 
       # Build (GitVersion.MsBuild sets version automatically)
       - name: Build
-        run: dotnet build --no-restore --configuration Release
+        run: dotnet build --no-restore --configuration Release $FLAVOR
 
-      # Extract version from GitVersion.MsBuild output
+      # Host version for this flavor (e.g. 1.4.0 / 2.4.0), computed by Directory.Build.targets
       - name: Extract Version
         id: version
         run: |
-          SEMVER=$(jq -r '.SemVer' src/Awen/obj/gitversion.json)
-          MAJORMINORPATCH=$(jq -r '.MajorMinorPatch' src/Awen/obj/gitversion.json)
-          echo "semVer=$SEMVER" >> $GITHUB_OUTPUT
-          echo "majorMinorPatch=$MAJORMINORPATCH" >> $GITHUB_OUTPUT
-          echo "Version: $SEMVER (MajorMinorPatch: $MAJORMINORPATCH)"
+          OUT=$(dotnet msbuild src/Awen/Awen.csproj -t:PrintAwenVersion -nologo -v:m -p:Configuration=Release $FLAVOR)
+          VERSION=$(echo "$OUT" | sed -n 's/.*AWEN_VERSION=//p' | tr -d '[:space:]')
+          MMP=$(echo "$OUT" | sed -n 's/.*AWEN_MAJOR_MINOR_PATCH=//p' | tr -d '[:space:]')
+          echo "majorMinorPatch=$MMP" >> $GITHUB_OUTPUT
+          # Passed to the release job through the artifact (matrix job outputs overwrite each other).
+          mkdir -p ./publish && echo "$MMP" > ./publish/version.txt
+          echo "Awen version for Avalonia ${{ matrix.avalonia }}: $VERSION (release $MMP)"
 
-      # Run unit tests
+      # Run unit tests (scanner tests use ExampleUI.Stories built for this flavor)
       - name: Unit Tests
         run: |
           dotnet test tests/Awen.Sdk.Tests/Awen.Sdk.Tests.csproj \
             --no-build \
             --configuration Release \
+            $FLAVOR \
             --logger "trx;LogFileName=sdk-tests.trx"
 
           dotnet test tests/Awen.Tests/Awen.Tests.csproj \
             --no-build \
             --configuration Release \
+            $FLAVOR \
             --logger "trx;LogFileName=awen-tests.trx"
 
-      # Publish linux-x64
-      - name: Publish linux-x64
+      # Self-contained single-file binaries, named awen-<rid> (1.x) or awen-avalonia12-<rid> (2.x)
+      - name: Publish binaries
         run: |
-          dotnet publish src/Awen/Awen.csproj \
-            --configuration Release \
-            --runtime linux-x64 \
-            --self-contained \
-            --output ./publish/linux-x64 \
-            /p:PublishSingleFile=true
-          mv ./publish/linux-x64/Awen ./publish/linux-x64/awen-linux-x64
+          SUFFIX=""
+          if [ "${{ matrix.avalonia }}" != "11" ]; then SUFFIX="-avalonia${{ matrix.avalonia }}"; fi
+          for RID in linux-x64 win-x64 osx-x64 osx-arm64; do
+            dotnet publish src/Awen/Awen.csproj \
+              --configuration Release \
+              --runtime $RID \
+              --self-contained \
+              --output ./publish/$RID \
+              $FLAVOR \
+              /p:PublishSingleFile=true
+            EXT=""
+            if [ "$RID" = "win-x64" ]; then EXT=".exe"; fi
+            mv ./publish/$RID/Awen$EXT ./publish/awen$SUFFIX-$RID$EXT
+          done
+          ls -la ./publish
 
-      # Publish win-x64
-      - name: Publish win-x64
-        run: |
-          dotnet publish src/Awen/Awen.csproj \
-            --configuration Release \
-            --runtime win-x64 \
-            --self-contained \
-            --output ./publish/win-x64 \
-            /p:PublishSingleFile=true
-          mv ./publish/win-x64/Awen.exe ./publish/win-x64/awen-win-x64.exe
-
-      # Publish osx-x64
-      - name: Publish osx-x64
-        run: |
-          dotnet publish src/Awen/Awen.csproj \
-            --configuration Release \
-            --runtime osx-x64 \
-            --self-contained \
-            --output ./publish/osx-x64 \
-            /p:PublishSingleFile=true
-          mv ./publish/osx-x64/Awen ./publish/osx-x64/awen-osx-x64
-
-      # Publish osx-arm64
-      - name: Publish osx-arm64
-        run: |
-          dotnet publish src/Awen/Awen.csproj \
-            --configuration Release \
-            --runtime osx-arm64 \
-            --self-contained \
-            --output ./publish/osx-arm64 \
-            /p:PublishSingleFile=true
-          mv ./publish/osx-arm64/Awen ./publish/osx-arm64/awen-osx-arm64
-
-      # Pack Awen.Sdk and Awen NuGet packages
+      # Awen tool for this flavor; Awen.Sdk only once (from the Avalonia 11 build)
       - name: Pack NuGet packages
-        if: github.ref == 'refs/heads/main'
         run: |
-          dotnet pack src/Awen.Sdk/Awen.Sdk.csproj \
-            --no-build \
-            --configuration Release
-          dotnet pack src/Awen/Awen.csproj \
-            --no-build \
-            --configuration Release
+          dotnet pack src/Awen/Awen.csproj --no-build --configuration Release $FLAVOR --output ./nupkg
+          if [ "${{ matrix.avalonia }}" = "11" ]; then
+            dotnet pack src/Awen.Sdk/Awen.Sdk.csproj --no-build --configuration Release $FLAVOR --output ./nupkg
+          fi
+          ls -la ./nupkg
 
-      # Create GitHub Release with binaries (main branch only)
-      - name: Create GitHub Release
-        if: github.ref == 'refs/heads/main'
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: awen-avalonia${{ matrix.avalonia }}
+          path: |
+            publish/awen*
+            publish/version.txt
+            nupkg/*.nupkg
+          if-no-files-found: error
+
+  release:
+    name: Release
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Read versions
+        id: versions
+        run: |
+          echo "v11=$(cat artifacts/awen-avalonia11/publish/version.txt)" >> $GITHUB_OUTPUT
+          echo "v12=$(cat artifacts/awen-avalonia12/publish/version.txt)" >> $GITHUB_OUTPUT
+          ls -R artifacts
+
+      # Awen 1.x (Avalonia 11). Tag v1.N.P also drives GitVersion for the next build.
+      - name: GitHub Release (Avalonia 11)
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ steps.version.outputs.majorMinorPatch }}
-          name: v${{ steps.version.outputs.majorMinorPatch }}
+          tag_name: v${{ steps.versions.outputs.v11 }}
+          name: v${{ steps.versions.outputs.v11 }} (Avalonia 11)
           generate_release_notes: true
-          files: |
-            publish/linux-x64/awen-linux-x64
-            publish/win-x64/awen-win-x64.exe
-            publish/osx-x64/awen-osx-x64
-            publish/osx-arm64/awen-osx-arm64
+          make_latest: false
+          files: artifacts/awen-avalonia11/publish/awen-*
 
-      # Publish NuGet packages
+      # Awen 2.x (Avalonia 12), same commit. v2.* tags are ignored by GitVersion.
+      - name: GitHub Release (Avalonia 12)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.versions.outputs.v12 }}
+          name: v${{ steps.versions.outputs.v12 }} (Avalonia 12)
+          generate_release_notes: true
+          make_latest: true
+          files: artifacts/awen-avalonia12/publish/awen-*
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      # Awen 1.x, Awen 2.x, Awen.Sdk
       - name: Publish NuGet packages
-        if: github.ref == 'refs/heads/main'
         run: |
-          dotnet nuget push src/Awen.Sdk/bin/Release/*.nupkg \
-            --api-key ${{ secrets.NUGET_API_KEY }} \
-            --source https://api.nuget.org/v3/index.json \
-            --skip-duplicate
-          dotnet nuget push src/Awen/bin/Release/*.nupkg \
-            --api-key ${{ secrets.NUGET_API_KEY }} \
-            --source https://api.nuget.org/v3/index.json \
-            --skip-duplicate
+          for PKG in artifacts/*/nupkg/*.nupkg; do
+            dotnet nuget push "$PKG" \
+              --api-key ${{ secrets.NUGET_API_KEY }} \
+              --source https://api.nuget.org/v3/index.json \
+              --skip-duplicate
+          done
