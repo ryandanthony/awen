@@ -17,14 +17,26 @@ namespace Awen.Discovery;
 public sealed class AssemblyScanner
 {
     private readonly TimeProvider _timeProvider;
+    private readonly Version _hostAvaloniaVersion;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AssemblyScanner"/> class.
     /// </summary>
     /// <param name="timeProvider">Optional time provider for timestamps. Defaults to <see cref="TimeProvider.System"/>.</param>
     public AssemblyScanner(TimeProvider? timeProvider = null)
+        : this(timeProvider, AvaloniaCompatibility.HostAvaloniaVersion)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AssemblyScanner"/> class with an explicit host Avalonia version.
+    /// </summary>
+    /// <param name="timeProvider">Optional time provider for timestamps.</param>
+    /// <param name="hostAvaloniaVersion">Avalonia version the host runs on; story assemblies must match its major version.</param>
+    internal AssemblyScanner(TimeProvider? timeProvider, Version hostAvaloniaVersion)
     {
         _timeProvider = timeProvider ?? TimeProvider.System;
+        _hostAvaloniaVersion = hostAvaloniaVersion;
     }
 
     /// <summary>
@@ -47,6 +59,14 @@ public sealed class AssemblyScanner
         {
             try
             {
+                var metadata = StoryAssemblyMetadata.Read(dll.FullName);
+                if (metadata is null || !metadata.IsStoryAssembly)
+                {
+                    continue; // Native library or not a story assembly. Skip without loading it.
+                }
+
+                ThrowIfAvaloniaMismatch(dll.Name, metadata.AvaloniaVersion);
+
                 var context = new StoryAssemblyLoadContext(dll.FullName);
                 var assembly = context.LoadFromAssemblyPath(dll.FullName);
                 var attribute = assembly.GetCustomAttribute<AwenStoryAssemblyAttribute>();
@@ -83,6 +103,20 @@ public sealed class AssemblyScanner
         }
 
         return (assemblies, errors);
+    }
+
+    private void ThrowIfAvaloniaMismatch(string fileName, Version? storyAvaloniaVersion)
+    {
+        if (storyAvaloniaVersion is null)
+        {
+            return;
+        }
+
+        var message = AvaloniaCompatibility.GetMismatchMessage(fileName, storyAvaloniaVersion, _hostAvaloniaVersion);
+        if (message is not null)
+        {
+            throw new AvaloniaVersionMismatchException(message);
+        }
     }
 
     private static List<StoryDescriptor> DiscoverStories(Assembly assembly, string libraryName)

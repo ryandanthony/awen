@@ -122,6 +122,12 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged, IDisposable
                 LogLevel.Error,
                 "Discovery",
                 $"Failed to load {error.FilePath}: {error.ErrorMessage}");
+
+            if (error.Exception is AvaloniaVersionMismatchException)
+            {
+                // Also tell terminal users, since this is a setup problem rather than a story bug.
+                Console.Error.WriteLine($"awen: {error.ErrorMessage}");
+            }
         }
 
         if (assemblies.Count == 0 && loadErrors.Count == 0)

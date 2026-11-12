@@ -5,7 +5,9 @@
 // -----------------------------------------------------------------------
 
 using System.CommandLine;
+using System.Globalization;
 using Avalonia;
+using Awen.Discovery;
 
 namespace Awen;
 
@@ -29,7 +31,11 @@ public static class Program
     {
         var (dirOption, watchOption, noWatchOption, themeOption, filterOption, restoreOption) = CreateOptions();
 
-        var rootCommand = new RootCommand("Awen — Storybook for Avalonia");
+        var host = AvaloniaCompatibility.HostAvaloniaVersion;
+        var rootCommand = new RootCommand(
+            string.Create(
+                CultureInfo.InvariantCulture,
+                $"Awen — Storybook for Avalonia (this build runs Avalonia {host.Major}.{host.Minor}; stories must target Avalonia {host.Major})"));
         rootCommand.Options.Add(dirOption);
         rootCommand.Options.Add(watchOption);
         rootCommand.Options.Add(noWatchOption);
