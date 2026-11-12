@@ -37,4 +37,12 @@ public sealed class AwenStoryAssemblyAttribute : Attribute
     /// Example: "MyLib.Themes.DarkTheme.axaml".
     /// </summary>
     public string? DarkThemeResourcePath { get; set; }
+
+    /// <summary>
+    /// Gets or sets an optional startup hook type that implements <see cref="IAwenStartup"/> and has a
+    /// public parameterless constructor. Awen calls it once at startup, before any story is rendered,
+    /// so the library can register fonts and do other app setup.
+    /// Example: <c>StartupType = typeof(MyLibStartup)</c>.
+    /// </summary>
+    public Type? StartupType { get; set; }
 }

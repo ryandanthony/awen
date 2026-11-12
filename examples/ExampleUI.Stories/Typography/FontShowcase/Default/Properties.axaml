@@ -1,0 +1,16 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:ExampleUI.Stories.Typography.FontShowcase.Default"
+             x:Class="ExampleUI.Stories.Typography.FontShowcase.Default.Properties"
+             x:DataType="local:Story">
+    <StackPanel Spacing="12" Margin="8">
+        <StackPanel Spacing="4">
+            <TextBlock Text="Sample Text" FontWeight="SemiBold" />
+            <TextBox Text="{Binding SampleText}" TextWrapping="Wrap" />
+        </StackPanel>
+        <StackPanel Spacing="4">
+            <TextBlock Text="Font Size" FontWeight="SemiBold" />
+            <NumericUpDown Value="{Binding SampleFontSize}" Minimum="8" Maximum="64" Increment="1" />
+        </StackPanel>
+    </StackPanel>
+</UserControl>

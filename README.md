@@ -65,6 +65,8 @@ using Awen.Sdk;
 [assembly: AwenStoryAssembly("My Controls")]
 ```
 
+Need fonts or other app setup before stories render? Add `StartupType = typeof(MyStartup)` with a class that implements `IAwenStartup` (see [Startup Hook](docs/sdk/startup-hook.md)).
+
 ### 4. Write a Story
 
 Implement the `IStory<TControl, TStoryProperties>` interface to define a previewable component scenario:

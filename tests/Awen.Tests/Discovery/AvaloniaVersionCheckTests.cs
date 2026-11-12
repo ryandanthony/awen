@@ -86,6 +86,7 @@ public sealed class AvaloniaVersionCheckTests : IDisposable
         var library = Assert.Single(assemblies);
         Assert.Equal("Example UI", library.LibraryName);
         Assert.NotEmpty(library.Stories);
+        Assert.Equal("ExampleUI.Stories.Startup", library.StartupType?.FullName);
     }
 
     [Fact]

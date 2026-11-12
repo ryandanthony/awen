@@ -5,5 +5,6 @@
 // -----------------------------------------------------------------------
 
 using Awen.Sdk;
+using ExampleUI.Stories;
 
-[assembly: AwenStoryAssembly("Example UI")]
+[assembly: AwenStoryAssembly("Example UI", StartupType = typeof(Startup))]

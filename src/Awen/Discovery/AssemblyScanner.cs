@@ -84,6 +84,7 @@ public sealed class AssemblyScanner
                     Assembly = assembly,
                     LightThemeResourcePath = attribute.LightThemeResourcePath,
                     DarkThemeResourcePath = attribute.DarkThemeResourcePath,
+                    StartupType = attribute.StartupType,
                     FilePath = dll.FullName,
                     Stories = stories,
                 });
