@@ -45,11 +45,16 @@ A human-readable description displayed below the preview canvas. Describes what 
 
 ### CreateControl()
 
-Returns a fresh `UserControl` instance that wraps the actual control being previewed. Awen sets the returned control's `DataContext` to the story instance, so XAML bindings connect directly to the story's public properties.
+Returns a fresh `UserControl` instance that wraps the actual control being previewed. If the returned control has no `DataContext`, Awen sets it to the story instance, so XAML bindings connect directly to the story's public properties. A `DataContext` you set yourself is kept, so several stories can share one view, each bound to its own model:
+
+```csharp
+public UserControl CreateControl() => new OnboardingView { DataContext = _model };
+public UserControl CreateProperties() => new OnboardingProperties { DataContext = _model };
+```
 
 ### CreateProperties()
 
-Returns a `UserControl` that provides interactive editors for the story's state. Like `CreateControl()`, its `DataContext` is set to the story instance. Use standard Avalonia controls — `TextBox`, `ToggleSwitch`, `NumericUpDown`, `ComboBox` — bound to the story's properties.
+Returns a `UserControl` that provides interactive editors for the story's state. Like `CreateControl()`, its `DataContext` defaults to the story instance, and one you set yourself is kept. Use standard Avalonia controls — `TextBox`, `ToggleSwitch`, `NumericUpDown`, `ComboBox` — bound to the story's properties.
 
 For stories with no editable properties, return a simple placeholder:
 

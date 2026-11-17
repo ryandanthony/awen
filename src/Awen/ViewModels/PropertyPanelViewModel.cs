@@ -115,7 +115,9 @@ public sealed class PropertyPanelViewModel : INotifyPropertyChanged
         try
         {
             var properties = story.StoryInstance.CreateProperties();
-            properties.DataContext = story.StoryInstance;
+
+            // A story may bind its properties to its own model; only default to the story when it didn't.
+            properties.DataContext ??= story.StoryInstance;
             PropertiesContent = properties;
         }
 #pragma warning disable CA1031 // Catch all for resilient properties rendering
