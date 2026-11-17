@@ -71,6 +71,20 @@ public sealed class PropertyPanelViewModelTests
     }
 
     [Fact]
+    public void Story_That_Sets_Its_Own_DataContext_Keeps_It_In_Properties()
+    {
+        var vm = new PropertyPanelViewModel();
+        var first = new OwnModelStory("first model");
+        var second = new OwnModelStory("second model");
+
+        vm.LoadStory(CreateDescriptor(first));
+        Assert.Same(first.Model, vm.PropertiesContent?.DataContext);
+
+        vm.LoadStory(CreateDescriptor(second));
+        Assert.Same(second.Model, vm.PropertiesContent?.DataContext);
+    }
+
+    [Fact]
     public void LoadStory_Replacing_Replaces_PropertiesContent()
     {
         var vm = new PropertyPanelViewModel();

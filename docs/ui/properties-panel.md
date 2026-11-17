@@ -12,10 +12,10 @@ The properties panel occupies the right side of the Awen window and hosts intera
 When a story is selected:
 
 1. Awen calls `CreateProperties()` on the story instance to get a `UserControl`
-2. The story instance is assigned as the control's `DataContext`
+2. If the control has no `DataContext`, the story instance is assigned as its `DataContext`. One the story set itself is kept
 3. The properties control is rendered in the right panel
 
-Because both the preview and properties panels share the same story instance as their `DataContext`, editing a value in the properties panel updates the preview in real time through standard Avalonia data binding.
+Because both the preview and properties panels share the same `DataContext` (the story instance, or the model the story gave both), editing a value in the properties panel updates the preview in real time through standard Avalonia data binding.
 
 ```mermaid
 graph LR

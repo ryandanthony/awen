@@ -513,7 +513,9 @@ public sealed class PreviewViewModel : INotifyPropertyChanged
         try
         {
             var control = descriptor.StoryInstance.CreateControl();
-            control.DataContext = descriptor.StoryInstance;
+
+            // A story may bind its control to its own model; only default to the story when it didn't.
+            control.DataContext ??= descriptor.StoryInstance;
             PreviewContent = control;
         }
 #pragma warning disable CA1031 // Catch all for resilient preview rendering

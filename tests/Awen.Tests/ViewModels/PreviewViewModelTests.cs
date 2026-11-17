@@ -58,6 +58,31 @@ public sealed class PreviewViewModelTests
     }
 
     [Fact]
+    public void Story_That_Sets_Its_Own_DataContext_Keeps_It()
+    {
+        var vm = new PreviewViewModel();
+        var first = new OwnModelStory("first model");
+        var second = new OwnModelStory("second model");
+
+        vm.SelectedStory = CreateDescriptor(first);
+        Assert.Same(first.Model, vm.PreviewContent?.DataContext);
+
+        vm.SelectedStory = CreateDescriptor(second);
+        Assert.Same(second.Model, vm.PreviewContent?.DataContext);
+    }
+
+    [Fact]
+    public void Story_Without_A_DataContext_Gets_The_Story()
+    {
+        var vm = new PreviewViewModel();
+        var story = new OwnModelStory(null);
+
+        vm.SelectedStory = CreateDescriptor(story);
+
+        Assert.Same(story, vm.PreviewContent?.DataContext);
+    }
+
+    [Fact]
     public void SelectingDifferentStory_Replaces_PreviewContent()
     {
         var vm = new PreviewViewModel();

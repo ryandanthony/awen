@@ -12,7 +12,7 @@ The preview canvas is the central panel where the selected story's control is re
 When you select a story in the sidebar:
 
 1. Awen calls `CreateControl()` on the story instance to get a fresh `UserControl`
-2. The story instance is assigned as the control's `DataContext`
+2. If the control has no `DataContext`, the story instance is assigned as its `DataContext`. One the story set itself is kept
 3. The control is rendered inside the preview canvas
 
 If `CreateControl()` throws an exception, an error message is displayed instead of the control.
